@@ -7,7 +7,6 @@ import { useUser } from "@auth0/nextjs-auth0/client";
 export const Navigation = () => {
   const router = useRouter();
   const { user, error, isLoading } = useUser();
-  console.log("USER", user);
 
   const signIn = () => {
     router.replace("/api/auth/login");
