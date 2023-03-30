@@ -58,7 +58,7 @@ export const CustomTable = ({ columns, data }: CustomTableProps) => {
     previousPage,
     setPageSize,
     state: { pageIndex, pageSize },
-  } = useTable(
+  } = useTable<any>(
     {
       columns,
       data,

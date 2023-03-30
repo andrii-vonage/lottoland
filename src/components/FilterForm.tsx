@@ -9,14 +9,14 @@ import {
 } from "@chakra-ui/react";
 
 import { useForm } from "react-hook-form";
-import { Template } from "src/pages/templates";
+import { Campaign } from "src/pages";
 
 interface FilterFormProps {
-  onFilter: (data: Partial<Template>) => void;
+  onFilter: (data: Partial<Campaign>) => void;
 }
 
 export const FilterForm = ({ onFilter }: FilterFormProps) => {
-  const { register, handleSubmit, reset } = useForm({
+  const { register, handleSubmit, reset } = useForm<Partial<Campaign>>({
     defaultValues: {},
   });
 

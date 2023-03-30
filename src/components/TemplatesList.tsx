@@ -77,7 +77,7 @@ export const TemplatesList = ({
       },
     ],
     [onDelete, onEdit]
-  );
+  ) as any;
 
   return <CustomTable columns={columns} data={data} />;
 };
