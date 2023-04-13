@@ -6,11 +6,11 @@ instance:
     region: aws.euw1
     application-id: 1016e212-2da5-4239-b4f5-7233804fec00
     entrypoint:
-        - node
-        - index.js
+        - npm
+        - start
 debug:
     name: lottoland-debug
     entrypoint:
-        - nodemon
-        - --inspect
-        - index.js
+        - npm
+        - run
+        - dev
