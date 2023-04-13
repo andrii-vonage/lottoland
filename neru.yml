@@ -1,0 +1,16 @@
+project:
+    name: lottoland
+instance:
+    name: dev
+    runtime: nodejs16
+    region: aws.euw1
+    application-id: 1016e212-2da5-4239-b4f5-7233804fec00
+    entrypoint:
+        - node
+        - index.js
+debug:
+    name: lottoland-debug
+    entrypoint:
+        - nodemon
+        - --inspect
+        - index.js
