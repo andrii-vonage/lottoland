@@ -32,27 +32,6 @@ export const TemplatesList = ({
         ],
       },
       {
-        Header: "Meta",
-        columns: [
-          {
-            Header: "Created at",
-            accessor: "createdAt",
-            Cell: ({ cell }: { cell: any }) => (
-              <Text>
-                <Tooltip
-                  placement="top"
-                  label={format(new Date(cell.value), "dd-MMMM-yyyy HH:mm")}
-                >
-                  {formatDistanceToNow(new Date(cell.value), {
-                    addSuffix: true,
-                  })}
-                </Tooltip>
-              </Text>
-            ),
-          },
-        ],
-      },
-      {
         header: "Actions",
         accessor: "some-key",
         Cell: ({ cell }: { cell: any }) => (

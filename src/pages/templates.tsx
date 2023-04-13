@@ -1,4 +1,14 @@
-import { Box, Button, Flex, Heading, Text } from "@chakra-ui/react";
+import {
+  Alert,
+  AlertDescription,
+  AlertIcon,
+  AlertTitle,
+  Button,
+  Flex,
+  Heading,
+  ListIcon,
+  Spinner,
+} from "@chakra-ui/react";
 import Head from "next/head";
 import { useState } from "react";
 import { ConfirmDialog } from "src/components/ConfirmDialog";
@@ -6,80 +16,77 @@ import { Navigation } from "src/components/Navigation";
 import { TemplateForm } from "src/components/TemplateForm";
 import { TemplatesList } from "src/components/TemplatesList";
 import { withPageAuthRequired } from "@auth0/nextjs-auth0/client";
+import useSWR from "swr";
+import { InfoIcon, QuestionIcon, WarningIcon } from "@chakra-ui/icons";
 
-const source: Array<Template> = [
-  {
-    id: "1",
-    senderIdFieldName: "senderId 1",
-    smsText: "smsText 1",
-    createdAt: "2021-05-01T12:00:00.000Z",
-  },
-  {
-    id: "2",
-    senderIdFieldName: "senderId 2",
-    smsText: "smsText 2",
-    createdAt: "2022-05-01T12:00:00.000Z",
-  },
-  {
-    id: "3",
-    senderIdFieldName: "senderId 3",
-    smsText: "smsText 3",
-    createdAt: "2023-05-01T12:00:00.000Z",
-  },
-  {
-    id: "4",
-    senderIdFieldName: "senderId 4",
-    smsText: "smsText 4",
-    createdAt: "2024-05-01T12:00:00.000Z",
-  },
-  {
-    id: "5",
-    senderIdFieldName: "senderId 5",
-    smsText: "smsText 5",
-    createdAt: "2025-05-01T12:00:00.000Z",
-  },
-];
+const fetcher = (input: RequestInfo, init?: RequestInit) =>
+  fetch(input, init).then((res) => res.json());
 
 export interface Template {
   id: string;
   smsText: string;
   senderIdFieldName: string;
-  createdAt: string;
 }
 
 export default withPageAuthRequired(function Templates() {
-  const [data, setData] = useState(source);
+  const { data, isLoading, error, mutate } = useSWR<{
+    result: Array<Template>;
+  }>("/api/templates", fetcher);
+
   const [templateToEdit, setTemplateToEdit] = useState<Template>();
   const [viewTemplateForm, setViewTemplateForm] = useState(false);
   const [templateToDelete, setTemplateToDelete] = useState<Template>();
+  const [successAlert, setSuccessAlert] = useState<string | null>(null);
+  const [errorAlert, setErrorAlert] = useState<string | null>(null);
 
   const handleDelete = (id: string) => {
-    setTemplateToDelete(data.find((template) => template.id === id));
+    setTemplateToDelete(data?.result.find((template) => template.id === id));
   };
 
-  const deleteTemplate = () => {
-    setData((data) =>
-      data.filter((template) => template.id !== templateToDelete?.id)
-    );
+  const deleteTemplate = async () => {
+    if (templateToDelete) {
+      await fetcher(`/api/templates/${templateToDelete.id}`, {
+        method: "DELETE",
+      });
+
+      mutate();
+      setSuccessAlert("Template deleted successfully");
+    }
 
     setTemplateToDelete(undefined);
   };
 
-  const handleEdit = (id: string) => {
-    setTemplateToEdit(data.find((template) => template.id === id));
+  const handleAdd = () => {
     setViewTemplateForm(true);
+    setSuccessAlert(null);
+    setErrorAlert(null);
   };
 
-  const handleCancel = () => {
+  const handleEdit = (id: string) => {
+    setTemplateToEdit(data?.result.find((template) => template.id === id));
+    handleAdd();
+  };
+
+  const handleClose = () => {
     setTemplateToEdit(undefined);
     setViewTemplateForm(false);
   };
 
-  const handleSave = (template: Template) => {
-    setData((data) => [
-      { ...template, createdAt: new Date().toISOString() },
-      ...data,
-    ]);
+  const handleSave = async (template: Template) => {
+    if (template.id && template.senderIdFieldName && template.smsText) {
+      await fetcher("/api/templates", {
+        body: JSON.stringify(template),
+        headers: { "Content-Type": "application/json" },
+        method: "POST",
+      });
+
+      mutate();
+      handleClose();
+      setSuccessAlert("Template saved successfully");
+      setErrorAlert(null);
+    } else {
+      setErrorAlert("Please fill all template fields");
+    }
   };
 
   return (
@@ -94,28 +101,77 @@ export default withPageAuthRequired(function Templates() {
           <Flex mx={8} justifyContent="space-between">
             <Heading mb={8}>Templates manager</Heading>
             {!viewTemplateForm && (
-              <Button
-                colorScheme="teal"
-                variant="outline"
-                onClick={() => setViewTemplateForm(true)}
-              >
+              <Button colorScheme="teal" variant="outline" onClick={handleAdd}>
                 Create new template
               </Button>
             )}
           </Flex>
+          {successAlert && (
+            <Alert status="success" marginBottom={8}>
+              <AlertIcon />
+              {successAlert}
+            </Alert>
+          )}
+          {errorAlert && (
+            <Alert status="error" marginBottom={8}>
+              <AlertIcon />
+              {String(errorAlert)}
+            </Alert>
+          )}
           <Flex direction="column" marginX={8}>
             {viewTemplateForm && (
               <TemplateForm
                 template={templateToEdit}
-                onCancel={handleCancel}
+                onCancel={handleClose}
                 onSave={handleSave}
               />
             )}
-            <TemplatesList
-              data={data}
-              onDelete={handleDelete}
-              onEdit={handleEdit}
-            />
+
+            {isLoading ? (
+              <Spinner />
+            ) : error ? (
+              <Alert
+                status="error"
+                variant="subtle"
+                flexDirection="column"
+                alignItems="center"
+                justifyContent="center"
+                textAlign="center"
+                height="200px"
+              >
+                <WarningIcon boxSize="40px" mr={0} />
+                <AlertTitle mt={4} mb={1} fontSize="lg">
+                  Something went wrong
+                </AlertTitle>
+                <AlertDescription maxWidth="sm">
+                  {error.message}
+                </AlertDescription>
+              </Alert>
+            ) : data?.result.length ? (
+              <TemplatesList
+                data={data.result}
+                onDelete={handleDelete}
+                onEdit={handleEdit}
+              />
+            ) : (
+              <Alert
+                status="info"
+                variant="subtle"
+                flexDirection="column"
+                alignItems="center"
+                justifyContent="center"
+                textAlign="center"
+                height="200px"
+              >
+                <QuestionIcon boxSize="40px" mr={0} />
+                <AlertTitle mt={4} mb={1} fontSize="lg">
+                  No templates found
+                </AlertTitle>
+                <AlertDescription maxWidth="sm">
+                  Add new template to get started.
+                </AlertDescription>
+              </Alert>
+            )}
             <ConfirmDialog
               isOpen={Boolean(templateToDelete?.id)}
               onClose={() => setTemplateToDelete(undefined)}

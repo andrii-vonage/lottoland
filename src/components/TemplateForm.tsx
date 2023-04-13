@@ -56,7 +56,7 @@ export const TemplateForm = ({
           />
         </FormControl>
         <FormControl isRequired>
-          <FormLabel>SMS textTemplate ID</FormLabel>
+          <FormLabel>SMS text</FormLabel>
           <Textarea
             placeholder="SMS text"
             background="white"

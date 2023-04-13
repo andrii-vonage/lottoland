@@ -6,10 +6,10 @@ declare module "react-table" {
       Record<string, any> {}
 
   export interface TableState<
-    D extends Record<string, unknwon> = Record<string, unknonw>
+    D extends Record<string, unknown> = Record<string, unknown>
   > extends UsePaginationState<D> {}
 
   export interface TableInstance<
-    D extends Record<string, unknwon> = Record<string, unknonw>
+    D extends Record<string, unknown> = Record<string, unknown>
   > extends UsePaginationInstanceProps<D> {}
 }
