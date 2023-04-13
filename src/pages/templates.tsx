@@ -20,7 +20,15 @@ import useSWR from "swr";
 import { InfoIcon, QuestionIcon, WarningIcon } from "@chakra-ui/icons";
 
 const fetcher = (input: RequestInfo, init?: RequestInit) =>
-  fetch(input, init).then((res) => res.json());
+  fetch(input, init).then(async (res) => {
+    if (res.ok) {
+      return res.json();
+    }
+
+    const { message } = (await res.json()) ?? { message: "Unknown error" };
+
+    throw new Error(message);
+  });
 
 export interface Template {
   id: string;
@@ -70,15 +78,23 @@ export default withPageAuthRequired(function Templates() {
   const handleClose = () => {
     setTemplateToEdit(undefined);
     setViewTemplateForm(false);
+
+    setSuccessAlert(null);
+    setErrorAlert(null);
   };
 
   const handleSave = async (template: Template) => {
     if (template.id && template.senderIdFieldName && template.smsText) {
-      await fetcher("/api/templates", {
-        body: JSON.stringify(template),
-        headers: { "Content-Type": "application/json" },
-        method: "POST",
-      });
+      try {
+        await fetcher("/api/templates", {
+          body: JSON.stringify(template),
+          headers: { "Content-Type": "application/json" },
+          method: "POST",
+        });
+      } catch (error: unknown) {
+        setErrorAlert((error as Error).message);
+        return;
+      }
 
       mutate();
       handleClose();
