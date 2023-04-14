@@ -18,6 +18,7 @@ import { TemplatesList } from "src/components/TemplatesList";
 import { withPageAuthRequired } from "@auth0/nextjs-auth0/client";
 import useSWR from "swr";
 import { InfoIcon, QuestionIcon, WarningIcon } from "@chakra-ui/icons";
+import { State } from "src/components/State";
 
 const fetcher = (input: RequestInfo, init?: RequestInit) =>
   fetch(input, init).then(async (res) => {
@@ -46,6 +47,7 @@ export default withPageAuthRequired(function Templates() {
   const [templateToDelete, setTemplateToDelete] = useState<Template>();
   const [successAlert, setSuccessAlert] = useState<string | null>(null);
   const [errorAlert, setErrorAlert] = useState<string | null>(null);
+  const [busy, setBusy] = useState(false);
 
   const handleDelete = (id: string) => {
     setTemplateToDelete(data?.result.find((template) => template.id === id));
@@ -86,17 +88,20 @@ export default withPageAuthRequired(function Templates() {
   const handleSave = async (template: Template) => {
     if (template.id && template.senderIdFieldName && template.smsText) {
       try {
+        setBusy(true);
         await fetcher("/api/templates", {
           body: JSON.stringify(template),
           headers: { "Content-Type": "application/json" },
           method: "POST",
         });
       } catch (error: unknown) {
+        setBusy(false);
         setErrorAlert((error as Error).message);
         return;
       }
 
       mutate();
+      setBusy(false);
       handleClose();
       setSuccessAlert("Template saved successfully");
       setErrorAlert(null);
@@ -137,6 +142,7 @@ export default withPageAuthRequired(function Templates() {
           <Flex direction="column" marginX={8}>
             {viewTemplateForm && (
               <TemplateForm
+                busy={busy}
                 template={templateToEdit}
                 onCancel={handleClose}
                 onSave={handleSave}
@@ -146,23 +152,11 @@ export default withPageAuthRequired(function Templates() {
             {isLoading ? (
               <Spinner />
             ) : error ? (
-              <Alert
+              <State
                 status="error"
-                variant="subtle"
-                flexDirection="column"
-                alignItems="center"
-                justifyContent="center"
-                textAlign="center"
-                height="200px"
-              >
-                <WarningIcon boxSize="40px" mr={0} />
-                <AlertTitle mt={4} mb={1} fontSize="lg">
-                  Something went wrong
-                </AlertTitle>
-                <AlertDescription maxWidth="sm">
-                  {error.message}
-                </AlertDescription>
-              </Alert>
+                title="Something went wrong"
+                description={error.message}
+              />
             ) : data?.result.length ? (
               <TemplatesList
                 data={data.result}
@@ -170,23 +164,11 @@ export default withPageAuthRequired(function Templates() {
                 onEdit={handleEdit}
               />
             ) : (
-              <Alert
+              <State
                 status="info"
-                variant="subtle"
-                flexDirection="column"
-                alignItems="center"
-                justifyContent="center"
-                textAlign="center"
-                height="200px"
-              >
-                <QuestionIcon boxSize="40px" mr={0} />
-                <AlertTitle mt={4} mb={1} fontSize="lg">
-                  No templates found
-                </AlertTitle>
-                <AlertDescription maxWidth="sm">
-                  Add new template to get started.
-                </AlertDescription>
-              </Alert>
+                title="No templates found"
+                description="Add new template to get started"
+              />
             )}
             <ConfirmDialog
               isOpen={Boolean(templateToDelete?.id)}

@@ -4,6 +4,7 @@ import {
   FormControl,
   FormLabel,
   Input,
+  Spinner,
   Stack,
   Textarea,
 } from "@chakra-ui/react";
@@ -12,12 +13,14 @@ import { useForm } from "react-hook-form";
 import { Template } from "src/pages/templates";
 
 interface TemplateFormProps {
+  busy?: boolean;
   onCancel: () => void;
   onSave: (data: Template) => void;
   template?: Template;
 }
 
 export const TemplateForm = ({
+  busy = false,
   onCancel,
   onSave,
   template,
@@ -72,7 +75,13 @@ export const TemplateForm = ({
           >
             Cancel
           </Button>
-          <Button colorScheme="teal" marginLeft={4} type="submit">
+          <Button
+            colorScheme="teal"
+            marginLeft={4}
+            type="submit"
+            disabled={busy}
+          >
+            {busy && <Spinner size="sm" marginRight={2} />}
             Save template
           </Button>
         </Flex>

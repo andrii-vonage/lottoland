@@ -1,9 +1,8 @@
 import { DeleteIcon, EditIcon } from "@chakra-ui/icons";
-import { IconButton, Flex, Text, Tooltip } from "@chakra-ui/react";
+import { IconButton, Flex } from "@chakra-ui/react";
 import { useMemo } from "react";
 import { CustomTable } from "./CustomTable";
 import { Template } from "src/pages/templates";
-import { formatDistanceToNow, format } from "date-fns";
 
 interface TemplatesListProps {
   onEdit: (id: string) => void;
