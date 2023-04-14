@@ -42,25 +42,37 @@ export const TemplateForm = ({
         padding={8}
         borderRadius={8}
       >
-        <FormControl isRequired>
-          <FormLabel>Template ID</FormLabel>
-          <Input
-            placeholder="Template ID"
-            background="white"
-            {...register("id")}
-          />
-        </FormControl>
-        <FormControl isRequired>
-          <FormLabel>Sender ID field name</FormLabel>
-          <Input
-            background="white"
-            placeholder="Sender ID field name"
-            {...register("senderIdFieldName")}
-          />
-        </FormControl>
+        <Stack direction="row" justifyContent="space-between">
+          <FormControl isRequired>
+            <FormLabel>Template ID</FormLabel>
+            <Input
+              type="number"
+              placeholder="Template ID"
+              background="white"
+              {...register("id")}
+            />
+          </FormControl>
+          <FormControl isRequired>
+            <FormLabel>Template name</FormLabel>
+            <Input
+              placeholder="Template name"
+              background="white"
+              {...register("name")}
+            />
+          </FormControl>
+          <FormControl isRequired>
+            <FormLabel>Sender ID field name</FormLabel>
+            <Input
+              background="white"
+              placeholder="Sender ID field name"
+              {...register("senderIdFieldName")}
+            />
+          </FormControl>
+        </Stack>
         <FormControl isRequired>
           <FormLabel>SMS text</FormLabel>
           <Textarea
+            rows={5}
             placeholder="SMS text"
             background="white"
             {...register("smsText")}

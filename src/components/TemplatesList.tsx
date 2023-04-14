@@ -5,8 +5,8 @@ import { CustomTable } from "./CustomTable";
 import { Template } from "src/pages/templates";
 
 interface TemplatesListProps {
-  onEdit: (id: string) => void;
-  onDelete: (id: string) => void;
+  onEdit: (id: number) => void;
+  onDelete: (id: number) => void;
   data: Array<Template>;
 }
 
@@ -17,22 +17,12 @@ export const TemplatesList = ({
 }: TemplatesListProps) => {
   const columns = useMemo(
     () => [
-      {
-        Header: "Template",
-        columns: [
-          {
-            Header: "ID",
-            accessor: "id",
-          },
-          {
-            Header: "Sender ID field name",
-            accessor: "senderIdFieldName",
-          },
-        ],
-      },
+      { Header: "ID", accessor: "id" },
+      { Header: "Name", accessor: "name" },
+      { Header: "Sender ID field name", accessor: "senderIdFieldName" },
       {
         header: "Actions",
-        accessor: "some-key",
+        accessor: "_",
         Cell: ({ cell }: { cell: any }) => (
           <Flex justifyContent="flex-end">
             <IconButton

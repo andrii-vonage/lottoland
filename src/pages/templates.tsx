@@ -1,12 +1,9 @@
 import {
   Alert,
-  AlertDescription,
   AlertIcon,
-  AlertTitle,
   Button,
   Flex,
   Heading,
-  ListIcon,
   Spinner,
 } from "@chakra-ui/react";
 import Head from "next/head";
@@ -17,39 +14,31 @@ import { TemplateForm } from "src/components/TemplateForm";
 import { TemplatesList } from "src/components/TemplatesList";
 import { withPageAuthRequired } from "@auth0/nextjs-auth0/client";
 import useSWR from "swr";
-import { InfoIcon, QuestionIcon, WarningIcon } from "@chakra-ui/icons";
 import { State } from "src/components/State";
-
-const fetcher = (input: RequestInfo, init?: RequestInit) =>
-  fetch(input, init).then(async (res) => {
-    if (res.ok) {
-      return res.json();
-    }
-
-    const { message } = (await res.json()) ?? { message: "Unknown error" };
-
-    throw new Error(message);
-  });
+import { TemplateFilterForm } from "src/components/TemplateFilterForm";
+import { fetcher, makeQuery } from "./utils";
 
 export interface Template {
-  id: string;
+  id: number;
+  name: string;
   smsText: string;
   senderIdFieldName: string;
 }
 
 export default withPageAuthRequired(function Templates() {
-  const { data, isLoading, error, mutate } = useSWR<{
-    result: Array<Template>;
-  }>("/api/templates", fetcher);
-
   const [templateToEdit, setTemplateToEdit] = useState<Template>();
   const [viewTemplateForm, setViewTemplateForm] = useState(false);
   const [templateToDelete, setTemplateToDelete] = useState<Template>();
   const [successAlert, setSuccessAlert] = useState<string | null>(null);
   const [errorAlert, setErrorAlert] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
+  const [search, setSearch] = useState<string>("");
 
-  const handleDelete = (id: string) => {
+  const { data, isLoading, error, mutate } = useSWR<{
+    result: Array<Template>;
+  }>(`/api/templates${search}`, fetcher);
+
+  const handleDelete = (id: number) => {
     setTemplateToDelete(data?.result.find((template) => template.id === id));
   };
 
@@ -72,7 +61,7 @@ export default withPageAuthRequired(function Templates() {
     setErrorAlert(null);
   };
 
-  const handleEdit = (id: string) => {
+  const handleEdit = (id: number) => {
     setTemplateToEdit(data?.result.find((template) => template.id === id));
     handleAdd();
   };
@@ -86,11 +75,16 @@ export default withPageAuthRequired(function Templates() {
   };
 
   const handleSave = async (template: Template) => {
-    if (template.id && template.senderIdFieldName && template.smsText) {
+    const id = parseInt(String(template.id), 10);
+    const name = template.name.trim();
+    const senderIdFieldName = template.senderIdFieldName.trim();
+    const smsText = template.smsText.trim();
+
+    if (id && name && senderIdFieldName && smsText) {
       try {
         setBusy(true);
         await fetcher("/api/templates", {
-          body: JSON.stringify(template),
+          body: JSON.stringify({ id, name, senderIdFieldName, smsText }),
           headers: { "Content-Type": "application/json" },
           method: "POST",
         });
@@ -108,6 +102,10 @@ export default withPageAuthRequired(function Templates() {
     } else {
       setErrorAlert("Please fill all template fields");
     }
+  };
+
+  const handleFilter = (filter: Partial<Template>) => {
+    setSearch(makeQuery(filter));
   };
 
   return (
@@ -139,16 +137,19 @@ export default withPageAuthRequired(function Templates() {
               {String(errorAlert)}
             </Alert>
           )}
-          <Flex direction="column" marginX={8}>
-            {viewTemplateForm && (
-              <TemplateForm
-                busy={busy}
-                template={templateToEdit}
-                onCancel={handleClose}
-                onSave={handleSave}
-              />
-            )}
 
+          {viewTemplateForm ? (
+            <TemplateForm
+              busy={busy}
+              template={templateToEdit}
+              onCancel={handleClose}
+              onSave={handleSave}
+            />
+          ) : (
+            <TemplateFilterForm onFilter={handleFilter} />
+          )}
+
+          <Flex direction="column" marginX={8}>
             {isLoading ? (
               <Spinner />
             ) : error ? (

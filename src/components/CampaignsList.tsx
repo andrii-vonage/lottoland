@@ -1,55 +1,40 @@
-import { Text, Tooltip } from "@chakra-ui/react";
+import { Flex, IconButton } from "@chakra-ui/react";
 import { CustomTable } from "./CustomTable";
-import { formatDistanceToNow, format } from "date-fns";
 import { Campaign } from "src/pages";
+import { CloseIcon } from "@chakra-ui/icons";
+import { useMemo } from "react";
 
 interface CampaignsListProps {
   data: Array<Campaign>;
+  onStop: (id: string) => void;
 }
 
-const columns = [
-  {
-    Header: "ID",
-    accessor: "id",
-  },
-  {
-    Header: "Name",
-    accessor: "name",
-  },
-  {
-    Header: "Start date",
-    accessor: "startDate",
-    Cell: ({ cell }: { cell: any }) => (
-      <Text>
-        <Tooltip
-          placement="top"
-          label={format(new Date(cell.value), "dd MMMM yyyy HH:mm")}
-        >
-          {formatDistanceToNow(new Date(cell.value), {
-            addSuffix: true,
-          })}
-        </Tooltip>
-      </Text>
-    ),
-  },
-  {
-    Header: "End date",
-    accessor: "endDate",
-    Cell: ({ cell }: { cell: any }) => (
-      <Text>
-        <Tooltip
-          placement="top"
-          label={format(new Date(cell.value), "dd MMMM yyyy HH:mm")}
-        >
-          {formatDistanceToNow(new Date(cell.value), {
-            addSuffix: true,
-          })}
-        </Tooltip>
-      </Text>
-    ),
-  },
-];
+export const CampaignsList = ({ data, onStop }: CampaignsListProps) => {
+  const columns = useMemo(
+    () => [
+      {
+        Header: "ID",
+        accessor: "id",
+      },
+      {
+        header: "Actions",
+        accessor: "_",
+        Cell: ({ cell }: { cell: any }) => (
+          <Flex justifyContent="flex-end">
+            <IconButton
+              marginLeft={3}
+              onClick={() => onStop(cell.row.values.id)}
+              icon={<CloseIcon />}
+              colorScheme="orange"
+              aria-label="Stop campaign"
+              variant="outline"
+            />
+          </Flex>
+        ),
+      },
+    ],
+    [onStop]
+  ) as any;
 
-export const CampaignsList = ({ data }: CampaignsListProps) => {
   return <CustomTable columns={columns} data={data} />;
 };
