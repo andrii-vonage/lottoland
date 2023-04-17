@@ -1,5 +1,13 @@
 import React from "react";
-import { useTable, usePagination, HeaderGroup, Row } from "react-table";
+import {
+  useTable,
+  usePagination,
+  HeaderGroup,
+  Row,
+  CellProps,
+  useSortBy,
+  IdType,
+} from "react-table";
 import {
   Table,
   Thead,
@@ -23,27 +31,29 @@ import {
   ArrowLeftIcon,
   ChevronRightIcon,
   ChevronLeftIcon,
+  ChevronDownIcon,
+  ChevronUpIcon,
 } from "@chakra-ui/icons";
 
-interface ColumnHeader {
+interface ColumnHeader<T extends {}> {
   Header: string;
-  accessor: string;
-  Cell?: ({ cell }: { cell: any }) => JSX.Element;
+  accessor?: keyof T extends never ? IdType<T> : never;
+  Cell?: (cell: CellProps<T>) => JSX.Element;
 }
 
-interface CustomTableProps {
+interface CustomTableProps<T extends {}> {
   withPagination?: boolean;
   columns:
-    | Array<ColumnHeader & { columns: Array<ColumnHeader> }>
-    | Array<ColumnHeader>;
-  data: any;
+    | Array<ColumnHeader<T> & { columns: Array<ColumnHeader<T>> }>
+    | Array<ColumnHeader<T>>;
+  data: Array<T>;
 }
 
-export const CustomTable = ({
+export const CustomTable = <T extends object>({
   columns,
   data,
   withPagination = false,
-}: CustomTableProps) => {
+}: CustomTableProps<T>) => {
   const {
     getTableProps,
     getTableBodyProps,
@@ -59,25 +69,39 @@ export const CustomTable = ({
     previousPage,
     setPageSize,
     state: { pageIndex, pageSize },
-  } = useTable<any>(
+  } = useTable<T>(
     {
       columns,
       data,
     },
+    useSortBy,
     usePagination
   );
 
-  const renderHeaderGroup = (headerGroup: HeaderGroup) =>
+  const renderHeaderGroup = (headerGroup: HeaderGroup<T>) =>
     headerGroup.headers.map((column) => {
-      const { key, ...restColumn } = column.getHeaderProps();
+      const { key, ...restColumn } = column.getHeaderProps(
+        column.getSortByToggleProps()
+      );
       return (
-        <Th key={key} {...restColumn} className="text-center">
+        <Th key={key} {...restColumn} style={{ whiteSpace: "nowrap" }}>
           {column.render("Header")}
+          <span>
+            {column.isSorted ? (
+              column.isSortedDesc ? (
+                <ChevronDownIcon />
+              ) : (
+                <ChevronUpIcon />
+              )
+            ) : (
+              ""
+            )}
+          </span>
         </Th>
       );
     });
 
-  const renderHeaderGroups = (headerGroups: Array<HeaderGroup>) =>
+  const renderHeaderGroups = (headerGroups: Array<HeaderGroup<T>>) =>
     headerGroups.map((headerGroup) => {
       const { key, ...restHeaderGroupProps } =
         headerGroup.getHeaderGroupProps();
@@ -89,7 +113,7 @@ export const CustomTable = ({
       );
     });
 
-  const renderRow = (row: Row) =>
+  const renderRow = (row: Row<T>) =>
     row.cells.map((cell) => {
       const { key, ...restCellProps } = cell.getCellProps();
 
@@ -100,8 +124,8 @@ export const CustomTable = ({
       );
     });
 
-  const renderPage = (rows: Array<Row>) =>
-    rows.map((row: Row) => {
+  const renderPage = (rows: Array<Row<T>>) =>
+    rows.map((row: Row<T>) => {
       prepareRow(row);
       const { key, ...restRowProps } = row.getRowProps();
 

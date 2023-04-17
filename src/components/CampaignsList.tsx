@@ -3,6 +3,7 @@ import { CustomTable } from "./CustomTable";
 import { Campaign } from "src/pages";
 import { CloseIcon } from "@chakra-ui/icons";
 import { useMemo } from "react";
+import { CellProps } from "react-table";
 
 interface CampaignsListProps {
   data: Array<Campaign>;
@@ -19,7 +20,7 @@ export const CampaignsList = ({ data, onStop }: CampaignsListProps) => {
       {
         header: "Actions",
         accessor: "_",
-        Cell: ({ cell }: { cell: any }) => (
+        Cell: ({ cell }: CellProps<Campaign>) => (
           <Flex justifyContent="flex-end">
             <IconButton
               marginLeft={3}

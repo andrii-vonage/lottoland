@@ -3,6 +3,7 @@ import { IconButton, Flex } from "@chakra-ui/react";
 import { useMemo } from "react";
 import { CustomTable } from "./CustomTable";
 import { Template } from "src/pages/templates";
+import { CellProps } from "react-table";
 
 interface TemplatesListProps {
   onEdit: (id: number) => void;
@@ -23,7 +24,7 @@ export const TemplatesList = ({
       {
         header: "Actions",
         accessor: "_",
-        Cell: ({ cell }: { cell: any }) => (
+        Cell: ({ cell }: CellProps<Template>) => (
           <Flex justifyContent="flex-end">
             <IconButton
               onClick={() => onEdit(cell.row.values.id)}
