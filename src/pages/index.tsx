@@ -6,7 +6,7 @@ import { withPageAuthRequired } from "@auth0/nextjs-auth0/client";
 import { useState } from "react";
 import { CampaignFilterForm } from "src/components/CampaignFilterForm";
 import { ConfirmDialog } from "src/components/ConfirmDialog";
-import { fetcher, makeQuery } from "./utils";
+import { fetcher, makeQuery } from "../utils";
 import useSWR from "swr";
 import { State } from "src/components/State";
 

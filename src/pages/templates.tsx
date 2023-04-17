@@ -16,7 +16,7 @@ import { withPageAuthRequired } from "@auth0/nextjs-auth0/client";
 import useSWR from "swr";
 import { State } from "src/components/State";
 import { TemplateFilterForm } from "src/components/TemplateFilterForm";
-import { fetcher, makeQuery } from "./utils";
+import { fetcher, makeQuery } from "../utils";
 
 export interface Template {
   id: number;

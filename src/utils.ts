@@ -1,5 +1,5 @@
-import { Campaign } from ".";
-import { Template } from "./templates";
+import { Campaign } from "./pages";
+import { Template } from "./pages/templates";
 
 export const fetcher = (input: RequestInfo, init?: RequestInit) =>
   fetch(input, init).then(async (res) => {
