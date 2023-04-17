@@ -1,5 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
-import { saveTemplate, getTemplates } from '../../../models/templates';
+import { addTemplateAPI, getTemplates, getTemplatesAPI } from '../../../models/templates/templates';
 import validateRequestBody from './validateRequestBody';
 
 export default async function handler(
@@ -21,11 +21,12 @@ export default async function handler(
                 return;
             }
 
-            await saveTemplate(body);
+            await addTemplateAPI(body);
             res.status(201).json({ result: 'OK' })
             break
         case 'GET':
             const templates = await getTemplates();
+            console.log('templates', templates)
             res.status(200).json({ result: templates })
             break
         default:

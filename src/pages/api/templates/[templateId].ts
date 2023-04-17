@@ -1,5 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
-import { deleteTemplate, getTemplate, saveTemplate } from '../../../models/templates';
+import { addTemplateAPI, deleteTemplateAPI, getTemplateDetailsAPI } from '../../../models/templates/templates';
 import validateRequestBody from './validateRequestBody';
 
 export default async function handler(
@@ -27,15 +27,15 @@ export default async function handler(
                 return;
             }
 
-            await saveTemplate(body);
+            await addTemplateAPI(body);
             res.status(200).json({ result: 'OK' })
             break
         case 'DELETE':
-            await deleteTemplate(templateId);
+            await deleteTemplateAPI(templateId);
             res.status(200).json({ result: 'OK' })
             break
         case 'GET':
-            const template = await getTemplate(templateId);
+            const template = await getTemplateDetailsAPI(templateId);
 
             if (!template) {
                 res.status(404).json({ message: 'Template not found' });
