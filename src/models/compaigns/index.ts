@@ -1,9 +1,13 @@
-import apiClient from "src/utils/apiClient"
-import { CHANNELS } from "../constants"
-import { neru } from 'neru-alpha'
+import apiClient from "src/utils/apiClient";
+import { CHANNELS } from "src/models/constants";
+import { neru } from 'neru-alpha';
+import state from "src/models/state";
+import { ICampaign } from "./interfaces";
 
 const BASE_URL = new URL('/current/integrations', process.env.API_BASE_URL).href
 const appURL = neru.getAppUrl();
+
+const CAMPAIGN_KEY = 'campaigns';
 
 
 export const registerEventListener = async (callback: string) => {
@@ -16,4 +20,8 @@ export const registerEventListener = async (callback: string) => {
         "ListenerURL": new URL(callback, appURL).href,
     });
     await apiClient(url, { method, body });
+}
+
+export const addCompaign = async (campaign: ICampaign) => {
+    await state.hset(CAMPAIGN_KEY, { [campaign.id]: JSON.stringify(campaign) });
 }
