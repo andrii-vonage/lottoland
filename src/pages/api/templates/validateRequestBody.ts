@@ -1,4 +1,4 @@
-import { ITemplate } from '../../../models/templates/ITemplate';
+import { IAddTemplateParams } from 'src/models/templates/interfaces';
 
 const isString = (value: unknown): value is string => typeof value === 'string';
 
@@ -10,16 +10,12 @@ const isValidIdentifier = (value: string): boolean => {
   return lettersAndNumbers.test(value) && value.length <= 11;
 };
 
-const validateRequestBody = (body: ITemplate): body is ITemplate => {
+const validateRequestBody = (body: IAddTemplateParams): body is IAddTemplateParams => {
   if (typeof body !== 'object' || body === null) {
     return false;
   }
 
-  const { id, name, smsText, senderIdFieldName } = body as Partial<ITemplate>;
-
-  if (typeof id !== "number") {
-    throw new Error('Invalid ID, should be a number');
-  }
+  const { name, smsText, senderIdFieldName } = body as Partial<IAddTemplateParams>;
 
   if (!isString(name)) {
     throw new Error('Invalid name, should be a string');

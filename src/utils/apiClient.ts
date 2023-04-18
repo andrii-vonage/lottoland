@@ -1,4 +1,4 @@
-import state from '../../models/state';
+import state from 'src/models/state';
 const baseURL = process.env.API_BASE_URL;
 const USERNAME = process.env.API_USERNAME;
 const PASSWORD = process.env.API_PASSWORD;
