@@ -44,15 +44,6 @@ export const TemplateForm = ({
       >
         <Stack direction="row" justifyContent="space-between">
           <FormControl isRequired>
-            <FormLabel>Template ID</FormLabel>
-            <Input
-              type="number"
-              placeholder="Template ID"
-              background="white"
-              {...register("id")}
-            />
-          </FormControl>
-          <FormControl isRequired>
             <FormLabel>Template name</FormLabel>
             <Input
               placeholder="Template name"
