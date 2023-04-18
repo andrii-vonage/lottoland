@@ -80,13 +80,13 @@ export default withPageAuthRequired(function Templates() {
     const senderIdFieldName = template.senderIdFieldName.trim();
     const smsText = template.smsText.trim();
 
-    if (id && name && senderIdFieldName && smsText) {
+    if (name && senderIdFieldName && smsText) {
       try {
         setBusy(true);
-        await fetcher("/api/templates", {
+        await fetcher(id ? `/api/templates/${id}` : "/api/templates", {
           body: JSON.stringify({ id, name, senderIdFieldName, smsText }),
           headers: { "Content-Type": "application/json" },
-          method: "POST",
+          method: id ? "PUT" : "POST",
         });
       } catch (error: unknown) {
         setBusy(false);

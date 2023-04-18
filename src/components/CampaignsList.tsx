@@ -1,4 +1,4 @@
-import { Flex, IconButton } from "@chakra-ui/react";
+import { Flex, IconButton, Tooltip } from "@chakra-ui/react";
 import { CustomTable } from "./CustomTable";
 import { Campaign } from "src/pages";
 import { CloseIcon } from "@chakra-ui/icons";
@@ -22,14 +22,16 @@ export const CampaignsList = ({ data, onStop }: CampaignsListProps) => {
         accessor: "_",
         Cell: ({ cell }: CellProps<Campaign>) => (
           <Flex justifyContent="flex-end">
-            <IconButton
-              marginLeft={3}
-              onClick={() => onStop(cell.row.values.id)}
-              icon={<CloseIcon />}
-              colorScheme="orange"
-              aria-label="Stop campaign"
-              variant="outline"
-            />
+            <Tooltip label="Stop campaign" placement="top">
+              <IconButton
+                marginLeft={3}
+                onClick={() => onStop(cell.row.values.id)}
+                icon={<CloseIcon />}
+                colorScheme="orange"
+                aria-label="Stop campaign"
+                variant="outline"
+              />
+            </Tooltip>
           </Flex>
         ),
       },

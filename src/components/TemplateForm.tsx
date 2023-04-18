@@ -42,6 +42,7 @@ export const TemplateForm = ({
         padding={8}
         borderRadius={8}
       >
+        <Input type="hidden" {...register("id")} />
         <Stack direction="row" justifyContent="space-between">
           <FormControl isRequired>
             <FormLabel>Template name</FormLabel>

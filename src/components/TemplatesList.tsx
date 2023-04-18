@@ -1,5 +1,5 @@
 import { DeleteIcon, EditIcon } from "@chakra-ui/icons";
-import { IconButton, Flex } from "@chakra-ui/react";
+import { IconButton, Flex, Tooltip } from "@chakra-ui/react";
 import { useMemo } from "react";
 import { CustomTable } from "./CustomTable";
 import { Template } from "src/pages/templates";
@@ -26,21 +26,25 @@ export const TemplatesList = ({
         accessor: "_",
         Cell: ({ cell }: CellProps<Template>) => (
           <Flex justifyContent="flex-end">
-            <IconButton
-              onClick={() => onEdit(cell.row.values.id)}
-              icon={<EditIcon />}
-              aria-label="Edit template"
-              colorScheme="teal"
-              variant="outline"
-            />
-            <IconButton
-              marginLeft={3}
-              onClick={() => onDelete(cell.row.values.id)}
-              icon={<DeleteIcon />}
-              colorScheme="red"
-              aria-label="Delete template"
-              variant="outline"
-            />
+            <Tooltip label="Edit template" placement="top">
+              <IconButton
+                onClick={() => onEdit(cell.row.values.id)}
+                icon={<EditIcon />}
+                aria-label="Edit template"
+                colorScheme="teal"
+                variant="outline"
+              />
+            </Tooltip>
+            <Tooltip label="Delete template" placement="top">
+              <IconButton
+                marginLeft={3}
+                onClick={() => onDelete(cell.row.values.id)}
+                icon={<DeleteIcon />}
+                colorScheme="red"
+                aria-label="Delete template"
+                variant="outline"
+              />
+            </Tooltip>
           </Flex>
         ),
       },

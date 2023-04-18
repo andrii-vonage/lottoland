@@ -53,7 +53,7 @@ export default withPageAuthRequired(function Home() {
         <Flex direction="column">
           <Navigation />
           <Heading mb={8} ml={8}>
-            Campaigns overview
+            Running campaigns
           </Heading>
           {successAlert && (
             <Alert status="success" marginBottom={8}>
