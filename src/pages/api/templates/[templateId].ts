@@ -1,5 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
-import { addTemplate, deleteTemplate, getTemplate } from '../../../models/templates';
+import { addTemplate, deleteTemplate, getTemplate, updateTemplate } from 'src/models/templates';
 import validateRequestBody from './validateRequestBody';
 
 export default async function handler(
@@ -27,7 +27,7 @@ export default async function handler(
                 return;
             }
 
-            await addTemplate(body);
+            await updateTemplate(body);
             res.status(200).json({ result: 'OK' })
             break
         case 'DELETE':
