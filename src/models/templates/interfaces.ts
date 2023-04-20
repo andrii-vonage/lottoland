@@ -1,4 +1,4 @@
-import { CHANNELS } from "../constants";
+import { CHANNELS, SORT_BY } from "../constants";
 
 export interface ITemplate {
     id: number;
@@ -22,3 +22,12 @@ export interface IAddTemplatePayload {
     TemplateID: number,
     TemplateName: string,
 }
+
+export interface IGetTemplatesParams {
+    name?: string,
+    offset?: number,
+    limit?: number,
+    sortBy?: string,
+    sortDir?: SORT_BY,
+}
+
