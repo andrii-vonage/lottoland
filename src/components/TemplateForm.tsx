@@ -8,9 +8,10 @@ import {
   Stack,
   Textarea,
 } from "@chakra-ui/react";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { Template } from "src/pages/templates";
+import { maxSmsTextLength } from "src/utils/config";
 
 interface TemplateFormProps {
   busy?: boolean;
@@ -25,6 +26,7 @@ export const TemplateForm = ({
   onSave,
   template,
 }: TemplateFormProps) => {
+  const [characterCount, setCharacterCount] = useState(0);
   const { register, handleSubmit, reset } = useForm({
     defaultValues: template,
   });
@@ -62,8 +64,12 @@ export const TemplateForm = ({
           </FormControl>
         </Stack>
         <FormControl isRequired>
-          <FormLabel>SMS text</FormLabel>
+          <FormLabel>
+            SMS text ({characterCount} of {maxSmsTextLength})
+          </FormLabel>
           <Textarea
+            maxLength={maxSmsTextLength}
+            onKeyDown={(e) => setCharacterCount(e.currentTarget.value.length)}
             rows={5}
             placeholder="SMS text"
             background="white"

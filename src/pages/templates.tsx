@@ -17,6 +17,7 @@ import useSWR from "swr";
 import { State } from "src/components/State";
 import { TemplateFilterForm } from "src/components/TemplateFilterForm";
 import { fetcher, makeQuery } from "../utils";
+import { maxSmsTextLength } from "../utils/config";
 
 export interface Template {
   id: number;
@@ -81,6 +82,13 @@ export default withPageAuthRequired(function Templates() {
     const smsText = template.smsText.trim();
 
     if (name && senderIdFieldName && smsText) {
+      if (smsText.length > maxSmsTextLength) {
+        setErrorAlert(
+          `SMS text is too long (max ${maxSmsTextLength} characters)`
+        );
+        return;
+      }
+
       try {
         setBusy(true);
         await fetcher(id ? `/api/templates/${id}` : "/api/templates", {
