@@ -8,13 +8,19 @@ import { CellProps } from "react-table";
 interface TemplatesListProps {
   onEdit: (id: number) => void;
   onDelete: (id: number) => void;
+  onPaginate: (offset: number) => void;
   data: Array<Template>;
+  offset?: number;
+  total: number;
 }
 
 export const TemplatesList = ({
   onEdit,
   onDelete,
+  onPaginate,
   data,
+  offset,
+  total,
 }: TemplatesListProps) => {
   const columns = useMemo(
     () => [
@@ -52,5 +58,14 @@ export const TemplatesList = ({
     [onDelete, onEdit]
   ) as any;
 
-  return <CustomTable columns={columns} data={data} />;
+  return (
+    <CustomTable
+      columns={columns}
+      data={data}
+      withPagination
+      offset={offset}
+      onPaginate={onPaginate}
+      total={total}
+    />
+  );
 };

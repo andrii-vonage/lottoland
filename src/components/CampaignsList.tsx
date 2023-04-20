@@ -8,9 +8,18 @@ import { CellProps } from "react-table";
 interface CampaignsListProps {
   data: Array<Campaign>;
   onStop: (id: string) => void;
+  onPaginate: (offset: number) => void;
+  offset?: number;
+  total: number;
 }
 
-export const CampaignsList = ({ data, onStop }: CampaignsListProps) => {
+export const CampaignsList = ({
+  onStop,
+  onPaginate,
+  data,
+  offset,
+  total,
+}: CampaignsListProps) => {
   const columns = useMemo(
     () => [
       {
@@ -39,5 +48,14 @@ export const CampaignsList = ({ data, onStop }: CampaignsListProps) => {
     [onStop]
   ) as any;
 
-  return <CustomTable columns={columns} data={data} />;
+  return (
+    <CustomTable
+      columns={columns}
+      data={data}
+      withPagination
+      onPaginate={onPaginate}
+      offset={offset}
+      total={total}
+    />
+  );
 };

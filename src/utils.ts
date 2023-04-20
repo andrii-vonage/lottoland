@@ -23,5 +23,5 @@ export const makeQuery = (filter: Partial<Template> | Partial<Campaign>) => {
     }
   });
 
-  return queryParams ? `?${queryParams.join("&")}` : "";
+  return queryParams ? `&${queryParams.join("&")}` : "";
 };

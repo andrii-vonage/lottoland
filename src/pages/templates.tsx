@@ -7,7 +7,7 @@ import {
   Spinner,
 } from "@chakra-ui/react";
 import Head from "next/head";
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { ConfirmDialog } from "src/components/ConfirmDialog";
 import { Navigation } from "src/components/Navigation";
 import { TemplateForm } from "src/components/TemplateForm";
@@ -17,7 +17,7 @@ import useSWR from "swr";
 import { State } from "src/components/State";
 import { TemplateFilterForm } from "src/components/TemplateFilterForm";
 import { fetcher, makeQuery } from "../utils";
-import { maxSmsTextLength } from "../utils/config";
+import { maxSmsTextLength, pageSize } from "../utils/config";
 
 export interface Template {
   id: number;
@@ -34,10 +34,12 @@ export default withPageAuthRequired(function Templates() {
   const [errorAlert, setErrorAlert] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
   const [search, setSearch] = useState<string>("");
+  const [offset, setOffset] = useState(0);
 
   const { data, isLoading, error, mutate } = useSWR<{
     result: Array<Template>;
-  }>(`/api/templates${search}`, fetcher);
+    total: number;
+  }>(`/api/templates?offset=${offset}&limit=${pageSize}${search}`, fetcher);
 
   const handleDelete = (id: number) => {
     setTemplateToDelete(data?.result.find((template) => template.id === id));
@@ -169,8 +171,11 @@ export default withPageAuthRequired(function Templates() {
             ) : data?.result.length ? (
               <TemplatesList
                 data={data.result}
+                total={data.total}
+                offset={offset}
                 onDelete={handleDelete}
                 onEdit={handleEdit}
+                onPaginate={setOffset}
               />
             ) : (
               <State

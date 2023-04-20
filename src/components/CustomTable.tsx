@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import {
   useTable,
   usePagination,
@@ -25,6 +25,7 @@ import {
   NumberInputStepper,
   NumberIncrementStepper,
   NumberDecrementStepper,
+  Spinner,
 } from "@chakra-ui/react";
 import {
   ArrowRightIcon,
@@ -34,6 +35,8 @@ import {
   ChevronDownIcon,
   ChevronUpIcon,
 } from "@chakra-ui/icons";
+import styled from "@emotion/styled";
+import * as config from "../utils/config";
 
 interface ColumnHeader<T extends {}> {
   Header: string;
@@ -47,12 +50,32 @@ interface CustomTableProps<T extends {}> {
     | Array<ColumnHeader<T> & { columns: Array<ColumnHeader<T>> }>
     | Array<ColumnHeader<T>>;
   data: Array<T>;
+  total: number;
+  offset?: number;
+  onPaginate: (offset: number) => void;
 }
+
+const Wrapper = styled.div`
+  position: relative;
+`;
+
+const SpinnerOverlay = styled.div`
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.8);
+`;
 
 export const CustomTable = <T extends object>({
   columns,
   data,
   withPagination = false,
+  offset = 0,
+  onPaginate,
+  total,
 }: CustomTableProps<T>) => {
   const {
     getTableProps,
@@ -60,23 +83,23 @@ export const CustomTable = <T extends object>({
     headerGroups,
     prepareRow,
     page,
-    canPreviousPage,
-    canNextPage,
-    pageOptions,
     pageCount,
-    gotoPage,
-    nextPage,
-    previousPage,
-    setPageSize,
-    state: { pageIndex, pageSize },
   } = useTable<T>(
     {
       columns,
       data,
+      manualPagination: true,
+      autoResetPage: false,
+      autoResetFilters: false,
+      pageCount: Math.ceil(total / config.pageSize),
+      pageIndex: offset,
     },
     useSortBy,
     usePagination
   );
+
+  const canPreviousPage = offset > 0;
+  const canNextPage = offset + 1 < pageCount;
 
   const renderHeaderGroup = (headerGroup: HeaderGroup<T>) =>
     headerGroup.headers.map((column) => {
@@ -137,7 +160,12 @@ export const CustomTable = <T extends object>({
     });
 
   return (
-    <>
+    <Wrapper>
+      {false && (
+        <SpinnerOverlay>
+          <Spinner />
+        </SpinnerOverlay>
+      )}
       <Table {...getTableProps()}>
         <Thead>{renderHeaderGroups(headerGroups)}</Thead>
         <Tbody {...getTableBodyProps()}>{renderPage(page)}</Tbody>
@@ -149,7 +177,7 @@ export const CustomTable = <T extends object>({
             <Tooltip label="First Page" placement="top">
               <IconButton
                 aria-label="First Page"
-                onClick={() => gotoPage(0)}
+                onClick={() => onPaginate(0)}
                 isDisabled={!canPreviousPage}
                 icon={<ArrowLeftIcon h={3} w={3} />}
                 mr={4}
@@ -158,7 +186,7 @@ export const CustomTable = <T extends object>({
             <Tooltip label="Previous Page" placement="top">
               <IconButton
                 aria-label="Previous Page"
-                onClick={previousPage}
+                onClick={() => onPaginate(offset - 1)}
                 isDisabled={!canPreviousPage}
                 icon={<ChevronLeftIcon h={6} w={6} />}
               />
@@ -169,52 +197,20 @@ export const CustomTable = <T extends object>({
             <Text flexShrink="0" mr={8}>
               Page{" "}
               <Text fontWeight="bold" as="span">
-                {pageIndex + 1}
+                {offset + 1}
               </Text>{" "}
               of{" "}
               <Text fontWeight="bold" as="span">
-                {pageOptions.length}
+                {pageCount}
               </Text>
             </Text>
-            <Text flexShrink="0">Go to page:</Text>{" "}
-            <NumberInput
-              ml={2}
-              mr={8}
-              w={28}
-              min={1}
-              max={pageOptions.length}
-              onChange={(value) => {
-                const page = value ? parseInt(value, 10) - 1 : 0;
-                gotoPage(page);
-              }}
-              defaultValue={pageIndex + 1}
-            >
-              <NumberInputField />
-              <NumberInputStepper>
-                <NumberIncrementStepper />
-                <NumberDecrementStepper />
-              </NumberInputStepper>
-            </NumberInput>
-            <Select
-              w={32}
-              value={pageSize}
-              onChange={(e) => {
-                setPageSize(Number(e.target.value));
-              }}
-            >
-              {[10, 20, 30, 40, 50].map((pageSize) => (
-                <option key={pageSize} value={pageSize}>
-                  Show {pageSize}
-                </option>
-              ))}
-            </Select>
           </Flex>
 
           <Flex>
             <Tooltip label="Next Page" placement="top">
               <IconButton
                 aria-label="Next Page"
-                onClick={nextPage}
+                onClick={() => onPaginate(offset + 1)}
                 isDisabled={!canNextPage}
                 icon={<ChevronRightIcon h={6} w={6} />}
               />
@@ -222,7 +218,7 @@ export const CustomTable = <T extends object>({
             <Tooltip label="Last Page" placement="top">
               <IconButton
                 aria-label="Last Page"
-                onClick={() => gotoPage(pageCount - 1)}
+                onClick={() => onPaginate(pageCount - 1)}
                 isDisabled={!canNextPage}
                 icon={<ArrowRightIcon h={3} w={3} />}
                 ml={4}
@@ -231,6 +227,6 @@ export const CustomTable = <T extends object>({
           </Flex>
         </Flex>
       )}
-    </>
+    </Wrapper>
   );
 };

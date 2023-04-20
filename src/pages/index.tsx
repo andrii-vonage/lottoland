@@ -9,6 +9,7 @@ import { ConfirmDialog } from "src/components/ConfirmDialog";
 import { fetcher, makeQuery } from "../utils";
 import useSWR from "swr";
 import { State } from "src/components/State";
+import { pageSize } from "../utils/config";
 
 export interface Campaign {
   id: string;
@@ -18,10 +19,12 @@ export default withPageAuthRequired(function Home() {
   const [campaignToStop, setCampaignToStop] = useState<Campaign>();
   const [successAlert, setSuccessAlert] = useState<string | null>(null);
   const [search, setSearch] = useState<string>("");
+  const [offset, setOffset] = useState(0);
 
   const { data, isLoading, error, mutate } = useSWR<{
     result: Array<Campaign>;
-  }>(`/api/campaigns${search}`, fetcher);
+    total: number;
+  }>(`/api/campaigns?offset=${offset}&limit=${pageSize}${search}`, fetcher);
 
   const handleFilter = (filter: Partial<Campaign>) => {
     setSearch(makeQuery(filter));
@@ -73,7 +76,13 @@ export default withPageAuthRequired(function Home() {
                 description={error.message}
               />
             ) : data?.result.length ? (
-              <CampaignsList data={data.result} onStop={handleStop} />
+              <CampaignsList
+                data={data.result}
+                onStop={handleStop}
+                total={data.total}
+                onPaginate={setOffset}
+                offset={offset}
+              />
             ) : (
               <State
                 status="info"
