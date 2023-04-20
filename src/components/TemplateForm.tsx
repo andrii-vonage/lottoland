@@ -83,7 +83,7 @@ export const TemplateForm = ({
             colorScheme="teal"
             marginLeft={4}
             type="submit"
-            disabled={busy}
+            isDisabled={busy}
           >
             {busy && <Spinner size="sm" marginRight={2} />}
             Save template
