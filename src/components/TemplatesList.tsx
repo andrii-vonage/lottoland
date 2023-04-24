@@ -56,10 +56,10 @@ export const TemplatesList = ({
       },
     ],
     [onDelete, onEdit]
-  ) as any;
+  );
 
   return (
-    <CustomTable
+    <CustomTable<Template>
       columns={columns}
       data={data}
       withPagination

@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 import {
   useTable,
   usePagination,
@@ -6,7 +6,6 @@ import {
   Row,
   CellProps,
   useSortBy,
-  IdType,
 } from "react-table";
 import {
   Table,
@@ -19,12 +18,6 @@ import {
   IconButton,
   Text,
   Tooltip,
-  Select,
-  NumberInput,
-  NumberInputField,
-  NumberInputStepper,
-  NumberIncrementStepper,
-  NumberDecrementStepper,
   Spinner,
 } from "@chakra-ui/react";
 import {
@@ -39,16 +32,14 @@ import styled from "@emotion/styled";
 import * as config from "../utils/config";
 
 interface ColumnHeader<T extends {}> {
-  Header: string;
-  accessor?: keyof T extends never ? IdType<T> : never;
+  Header?: string;
+  accessor: any;
   Cell?: (cell: CellProps<T>) => JSX.Element;
 }
 
 interface CustomTableProps<T extends {}> {
   withPagination?: boolean;
-  columns:
-    | Array<ColumnHeader<T> & { columns: Array<ColumnHeader<T>> }>
-    | Array<ColumnHeader<T>>;
+  columns: Array<ColumnHeader<T>>;
   data: Array<T>;
   total: number;
   offset?: number;
@@ -75,7 +66,7 @@ export const CustomTable = <T extends object>({
   withPagination = false,
   offset = 0,
   onPaginate,
-  total,
+  total = 0,
 }: CustomTableProps<T>) => {
   const {
     getTableProps,

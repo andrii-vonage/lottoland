@@ -46,10 +46,10 @@ export const CampaignsList = ({
       },
     ],
     [onStop]
-  ) as any;
+  );
 
   return (
-    <CustomTable
+    <CustomTable<Campaign>
       columns={columns}
       data={data}
       withPagination

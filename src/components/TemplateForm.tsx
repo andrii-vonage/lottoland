@@ -1,3 +1,4 @@
+import { WarningIcon, WarningTwoIcon } from "@chakra-ui/icons";
 import {
   Button,
   Flex,
@@ -7,11 +8,12 @@ import {
   Spinner,
   Stack,
   Textarea,
+  Tooltip,
 } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { Template } from "src/pages/templates";
-import { maxSmsTextLength } from "src/utils/config";
+import { maxSmsTextLength, warnSmsTextLength } from "src/utils/config";
 
 interface TemplateFormProps {
   busy?: boolean;
@@ -64,9 +66,23 @@ export const TemplateForm = ({
           </FormControl>
         </Stack>
         <FormControl isRequired>
-          <FormLabel>
-            SMS text ({characterCount} of {maxSmsTextLength})
-          </FormLabel>
+          <Stack direction="row" justifyContent="space-between" width="100%">
+            <FormLabel flexGrow={1}>
+              SMS text ({characterCount} of {maxSmsTextLength})
+            </FormLabel>
+            {characterCount > warnSmsTextLength && (
+              <>
+                <Tooltip
+                  label={`Message length exceeds single SMS length limit (${warnSmsTextLength} characters).`}
+                  placement="left"
+                >
+                  <WarningTwoIcon color="orange.400" boxSize={6} />
+                </Tooltip>
+                &nbsp;
+              </>
+            )}
+          </Stack>
+
           <Textarea
             maxLength={maxSmsTextLength}
             onKeyDown={(e) => setCharacterCount(e.currentTarget.value.length)}
