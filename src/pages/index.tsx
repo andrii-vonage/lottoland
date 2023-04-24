@@ -24,7 +24,9 @@ export default withPageAuthRequired(function Home() {
   const { data, isLoading, error, mutate } = useSWR<{
     result: Array<Campaign>;
     total: number;
-  }>(`/api/campaigns?offset=${offset}&limit=${pageSize}${search}`, fetcher);
+  }>(`/api/campaigns?offset=${offset}&limit=${pageSize}${search}`, fetcher, {
+    revalidateOnFocus: false,
+  });
 
   const handleFilter = (filter: Partial<Campaign>) => {
     setSearch(makeQuery(filter));

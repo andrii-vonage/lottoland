@@ -39,7 +39,9 @@ export default withPageAuthRequired(function Templates() {
   const { data, isLoading, error, mutate } = useSWR<{
     result: Array<Template>;
     total: number;
-  }>(`/api/templates?offset=${offset}&limit=${pageSize}${search}`, fetcher);
+  }>(`/api/templates?offset=${offset}&limit=${pageSize}${search}`, fetcher, {
+    revalidateOnFocus: false,
+  });
 
   const handleDelete = (id: number) => {
     setTemplateToDelete(data?.result.find((template) => template.id === id));
