@@ -34,11 +34,11 @@ export const getTemplates = async (params: IGetTemplatesParams) => {
 
     const offsetInt = offset || 0;
     const limitInt = limit || filteredData.length;
-    filteredData = filteredData.slice(offsetInt, offsetInt + limitInt);
+    const result = filteredData.slice(offsetInt, offsetInt + limitInt);
 
     return {
-        result: filteredData,
-        total: data.length,
+        result,
+        total: filteredData.length,
     }
 }
 
