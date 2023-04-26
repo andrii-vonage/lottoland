@@ -17,7 +17,8 @@ import useSWR from "swr";
 import { State } from "src/components/State";
 import { TemplateFilterForm } from "src/components/TemplateFilterForm";
 import { fetcher, makeQuery } from "../utils";
-import { maxSmsTextLength, pageSize } from "../utils/config";
+import { pageSize } from "../utils/config";
+import { getCounterStats } from "@sms77.io/counter";
 
 export interface Template {
   id: number;
@@ -86,7 +87,9 @@ export default withPageAuthRequired(function Templates() {
     const smsText = template.smsText.trim();
 
     if (name && senderIdFieldName && smsText) {
-      if (smsText.length > maxSmsTextLength) {
+      const { charCount, charLimit } = getCounterStats(smsText);
+      const maxSmsTextLength = charLimit * 2;
+      if (charCount > maxSmsTextLength) {
         setErrorAlert(
           `SMS text is too long (max ${maxSmsTextLength} characters)`
         );

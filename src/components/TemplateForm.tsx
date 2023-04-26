@@ -1,4 +1,4 @@
-import { WarningIcon, WarningTwoIcon } from "@chakra-ui/icons";
+import { WarningTwoIcon } from "@chakra-ui/icons";
 import {
   Button,
   Flex,
@@ -13,7 +13,7 @@ import {
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { Template } from "src/pages/templates";
-import { maxSmsTextLength, warnSmsTextLength } from "src/utils/config";
+import { CounterStats, getCounterStats } from "@sms77.io/counter";
 
 interface TemplateFormProps {
   busy?: boolean;
@@ -28,7 +28,12 @@ export const TemplateForm = ({
   onSave,
   template,
 }: TemplateFormProps) => {
-  const [characterCount, setCharacterCount] = useState(0);
+  const [value, setValue] = useState("");
+  const [counterStats, setCounterStats] = useState<CounterStats>();
+  const characterCount = counterStats?.charCount || 0;
+  const warnSmsTextLength = counterStats?.charLimit || 160;
+  const maxSmsTextLength = warnSmsTextLength * 2;
+
   const { register, handleSubmit, reset } = useForm({
     defaultValues: template,
   });
@@ -36,6 +41,10 @@ export const TemplateForm = ({
   useEffect(() => {
     reset(template);
   }, [reset, template]);
+
+  useEffect(() => {
+    setCounterStats(getCounterStats(value));
+  }, [value]);
 
   return (
     <form onSubmit={handleSubmit(onSave)}>
@@ -68,7 +77,15 @@ export const TemplateForm = ({
         <FormControl isRequired>
           <Stack direction="row" justifyContent="space-between" width="100%">
             <FormLabel flexGrow={1}>
-              SMS text ({characterCount} of {maxSmsTextLength})
+              SMS text (
+              <strong
+                style={{
+                  color: characterCount > maxSmsTextLength ? "red" : "black",
+                }}
+              >
+                {characterCount} of {maxSmsTextLength}
+              </strong>
+              ), encoding <strong>{counterStats?.encoding}</strong>
             </FormLabel>
             {characterCount > warnSmsTextLength && (
               <>
@@ -85,7 +102,7 @@ export const TemplateForm = ({
 
           <Textarea
             maxLength={maxSmsTextLength}
-            onKeyDown={(e) => setCharacterCount(e.currentTarget.value.length)}
+            onChangeCapture={(e) => setValue(e.currentTarget.value)}
             rows={5}
             placeholder="SMS text"
             background="white"
@@ -105,7 +122,7 @@ export const TemplateForm = ({
             colorScheme="teal"
             marginLeft={4}
             type="submit"
-            isDisabled={busy}
+            isDisabled={busy || characterCount > maxSmsTextLength}
           >
             {busy && <Spinner size="sm" marginRight={2} />}
             Save template
