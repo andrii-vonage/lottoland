@@ -1,6 +1,7 @@
-import { WarningTwoIcon } from "@chakra-ui/icons";
 import {
   Button,
+  Center,
+  Divider,
   Flex,
   FormControl,
   FormLabel,
@@ -8,7 +9,6 @@ import {
   Spinner,
   Stack,
   Textarea,
-  Tooltip,
 } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
@@ -46,6 +46,9 @@ export const TemplateForm = ({
     setCounterStats(getCounterStats(value));
   }, [value]);
 
+  const messageNum = Math.ceil(characterCount / warnSmsTextLength) || 1;
+  const totalMessages = maxSmsTextLength / warnSmsTextLength;
+
   return (
     <form onSubmit={handleSubmit(onSave)}>
       <Stack
@@ -76,28 +79,32 @@ export const TemplateForm = ({
         </Stack>
         <FormControl isRequired>
           <Stack direction="row" justifyContent="space-between" width="100%">
-            <FormLabel flexGrow={1}>
-              SMS text (
-              <strong
-                style={{
-                  color: characterCount > maxSmsTextLength ? "red" : "black",
-                }}
-              >
-                {characterCount} of {maxSmsTextLength}
-              </strong>
-              ), encoding <strong>{counterStats?.encoding}</strong>
-            </FormLabel>
-            {characterCount > warnSmsTextLength && (
-              <>
-                <Tooltip
-                  label={`Message length exceeds single SMS length limit (${warnSmsTextLength} characters).`}
-                  placement="left"
+            <FormLabel flexGrow={1}>SMS text</FormLabel>
+            <>
+              <Stack direction="row" minWidth="120px">
+                <span>Message:</span>
+                <strong
+                  style={{
+                    color: characterCount > maxSmsTextLength ? "red" : "black",
+                  }}
                 >
-                  <WarningTwoIcon color="orange.400" boxSize={6} />
-                </Tooltip>
-                &nbsp;
-              </>
-            )}
+                  {messageNum} of {totalMessages}
+                </strong>
+              </Stack>
+              <Center height="25px" marginX="md">
+                <Divider orientation="vertical" />
+              </Center>
+              <Stack direction="row" minWidth="200px">
+                <span>Characters:</span>
+                <strong
+                  style={{
+                    color: characterCount > maxSmsTextLength ? "red" : "black",
+                  }}
+                >
+                  {characterCount} of {maxSmsTextLength}
+                </strong>
+              </Stack>
+            </>
           </Stack>
 
           <Textarea
