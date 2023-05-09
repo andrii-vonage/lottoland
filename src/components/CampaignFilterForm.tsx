@@ -33,6 +33,14 @@ export const CampaignFilterForm = ({ onFilter }: CampaignFilterFormProps) => {
             placeholder="Campaign ID"
             background="white"
             {...register("id")}
+            marginRight={2}
+          />
+        </Flex>
+        <Flex flexGrow={4}>
+          <Input
+            placeholder="Target group"
+            background="white"
+            {...register("targetGroupName")}
             marginRight={4}
           />
         </Flex>

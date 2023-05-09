@@ -6,13 +6,17 @@ import { withPageAuthRequired } from "@auth0/nextjs-auth0/client";
 import { useState } from "react";
 import { CampaignFilterForm } from "src/components/CampaignFilterForm";
 import { ConfirmDialog } from "src/components/ConfirmDialog";
-import { fetcher, makeQuery } from "../utils";
+import { fetcher, getSortQuery, makeQuery } from "../utils";
 import useSWR from "swr";
 import { State } from "src/components/State";
 import { pageSize } from "../utils/config";
 
 export interface Campaign {
   id: string;
+  targetGroupName: string;
+  actions: Array<string>;
+  startDate: string;
+  endDate: string;
 }
 
 export default withPageAuthRequired(function Home() {
@@ -20,13 +24,23 @@ export default withPageAuthRequired(function Home() {
   const [successAlert, setSuccessAlert] = useState<string | null>(null);
   const [search, setSearch] = useState<string>("");
   const [offset, setOffset] = useState(0);
+  const [sort, setSort] = useState({
+    sortBy: "",
+    sortDir: "asc" as "asc" | "desc",
+  });
 
   const { data, isLoading, error, mutate } = useSWR<{
     result: Array<Campaign>;
     total: number;
-  }>(`/api/campaigns?offset=${offset}&limit=${pageSize}${search}`, fetcher, {
-    revalidateOnFocus: false,
-  });
+  }>(
+    `/api/campaigns?offset=${
+      offset * pageSize
+    }&limit=${pageSize}${search}${getSortQuery(sort)}`,
+    fetcher,
+    {
+      revalidateOnFocus: false,
+    }
+  );
 
   const handleFilter = (filter: Partial<Campaign>) => {
     setSearch(makeQuery(filter));
@@ -84,6 +98,9 @@ export default withPageAuthRequired(function Home() {
                 total={data.total}
                 onPaginate={setOffset}
                 offset={offset}
+                onSort={setSort}
+                sortBy={sort.sortBy}
+                sortDir={sort.sortDir}
               />
             ) : (
               <State

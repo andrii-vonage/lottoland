@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import {
   useTable,
   usePagination,
@@ -30,6 +30,7 @@ import {
 } from "@chakra-ui/icons";
 import styled from "@emotion/styled";
 import * as config from "../utils/config";
+import { TableOptions } from "src/utils";
 
 interface ColumnHeader<T extends {}> {
   Header?: string;
@@ -37,13 +38,10 @@ interface ColumnHeader<T extends {}> {
   Cell?: (cell: CellProps<T>) => JSX.Element;
 }
 
-interface CustomTableProps<T extends {}> {
+interface CustomTableProps<T extends {}> extends TableOptions {
   withPagination?: boolean;
   columns: Array<ColumnHeader<T>>;
   data: Array<T>;
-  total: number;
-  offset?: number;
-  onPaginate: (offset: number) => void;
 }
 
 const Wrapper = styled.div`
@@ -66,6 +64,9 @@ export const CustomTable = <T extends object>({
   withPagination = false,
   offset = 0,
   onPaginate,
+  sortBy,
+  sortDir,
+  onSort,
   total = 0,
 }: CustomTableProps<T>) => {
   const {
@@ -75,28 +76,50 @@ export const CustomTable = <T extends object>({
     prepareRow,
     page,
     pageCount,
+    state: { sortBy: sortByState },
   } = useTable<T>(
     {
       columns,
       data,
       manualPagination: true,
       autoResetPage: false,
+      manualSortBy: true,
       autoResetFilters: false,
       pageCount: Math.ceil(total / config.pageSize),
       pageIndex: offset,
+      desc: true,
+      initialState: {
+        sortBy: [
+          {
+            id: sortBy,
+            desc: sortDir === "desc",
+          },
+        ],
+      },
     },
     useSortBy,
     usePagination
   );
 
+  const { id, desc } = sortByState[0] || { id: null, desc: null };
+
   const canPreviousPage = offset > 0;
   const canNextPage = offset + 1 < pageCount;
+
+  useEffect(() => {
+    if (id) {
+      onSort({ sortBy: id, sortDir: desc ? "desc" : "asc" });
+    } else {
+      onSort({ sortBy: "", sortDir: "asc" });
+    }
+  }, [desc, id, onSort]);
 
   const renderHeaderGroup = (headerGroup: HeaderGroup<T>) =>
     headerGroup.headers.map((column) => {
       const { key, ...restColumn } = column.getHeaderProps(
         column.getSortByToggleProps()
       );
+
       return (
         <Th key={key} {...restColumn} style={{ whiteSpace: "nowrap" }}>
           {column.render("Header")}

@@ -4,23 +4,19 @@ import { useMemo } from "react";
 import { CustomTable } from "./CustomTable";
 import { Template } from "src/pages/templates";
 import { CellProps } from "react-table";
+import { TableOptions } from "src/utils";
 
-interface TemplatesListProps {
+interface TemplatesListProps extends TableOptions {
   onEdit: (id: number) => void;
   onDelete: (id: number) => void;
-  onPaginate: (offset: number) => void;
   data: Array<Template>;
-  offset?: number;
-  total: number;
 }
 
 export const TemplatesList = ({
   onEdit,
   onDelete,
-  onPaginate,
   data,
-  offset,
-  total,
+  ...rest
 }: TemplatesListProps) => {
   const columns = useMemo(
     () => [
@@ -63,9 +59,7 @@ export const TemplatesList = ({
       columns={columns}
       data={data}
       withPagination
-      offset={offset}
-      onPaginate={onPaginate}
-      total={total}
+      {...rest}
     />
   );
 };
