@@ -21,21 +21,36 @@ export function timestampToYMD(timestamp: string): string {
 export function addDaysToTimestamp(timestamp: string, days: number) {
   let date = new Date(timestamp);
   date.setDate(date.getDate() + days);
-  
+
   let year = date.getFullYear();
   let month = String(date.getMonth() + 1).padStart(2, '0');  // JavaScript months are 0-based
   let day = String(date.getDate()).padStart(2, '0');
   let hours = String(date.getHours()).padStart(2, '0');
   let minutes = String(date.getMinutes()).padStart(2, '0');
   let seconds = String(date.getSeconds()).padStart(2, '0');
-  
+
   return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
 }
 
-export function fillTemplate(template:string, dictionary: Record<string, string>) {
-  return template.replace(/{{\s*(.*?)\s*}}/g, function(_, key) {
+export function fillTemplate(template: string, dictionary: Record<string, string>) {
+  return template.replace(/{{\s*(.*?)\s*}}/g, function (_, key) {
     return dictionary[key.trim()] || '';
   });
+}
+
+interface SortOptions {
+  sortBy: string;
+  sortDir: "asc" | "desc";
+}
+
+interface PaginationOptions {
+  offset?: number;
+  total: number;
+}
+
+export interface TableOptions extends SortOptions, PaginationOptions {
+  onSort: (data: SortOptions) => void;
+  onPaginate: (offset: number) => void;
 }
 
 export const fetcher = (input: RequestInfo, init?: RequestInit) =>
@@ -49,7 +64,9 @@ export const fetcher = (input: RequestInfo, init?: RequestInit) =>
     throw new Error(message);
   });
 
-export const makeQuery = (filter: Partial<Template> | Partial<Campaign>) => {
+export const makeQuery = (
+  filter: Partial<Template> | Partial<Campaign> | SortOptions
+) => {
   let queryParams: Array<string> = [];
 
   Object.entries(filter).forEach(([key, value]) => {
@@ -61,4 +78,13 @@ export const makeQuery = (filter: Partial<Template> | Partial<Campaign>) => {
   });
 
   return queryParams ? `&${queryParams.join("&")}` : "";
+};
+
+export const getSortQuery = (sort: SortOptions) => {
+  const { sortBy, sortDir } = sort;
+  if (sortBy) {
+    return makeQuery({ sortBy, sortDir });
+  }
+
+  return "";
 };

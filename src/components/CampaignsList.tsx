@@ -4,27 +4,39 @@ import { Campaign } from "src/pages";
 import { CloseIcon } from "@chakra-ui/icons";
 import { useMemo } from "react";
 import { CellProps } from "react-table";
+import { TableOptions } from "src/utils";
 
-interface CampaignsListProps {
+interface CampaignsListProps extends TableOptions {
   data: Array<Campaign>;
   onStop: (id: string) => void;
-  onPaginate: (offset: number) => void;
-  offset?: number;
-  total: number;
 }
 
 export const CampaignsList = ({
   onStop,
-  onPaginate,
   data,
-  offset,
-  total,
+  ...rest
 }: CampaignsListProps) => {
   const columns = useMemo(
     () => [
       {
         Header: "ID",
         accessor: "id",
+      },
+      {
+        Header: "Target group",
+        accessor: "targetGroupName",
+      },
+      {
+        Header: "Actions",
+        accessor: "actions",
+      },
+      {
+        Header: "Start date",
+        accessor: "startDate",
+      },
+      {
+        Header: "End date",
+        accessor: "endDate",
       },
       {
         header: "Actions",
@@ -53,9 +65,7 @@ export const CampaignsList = ({
       columns={columns}
       data={data}
       withPagination
-      onPaginate={onPaginate}
-      offset={offset}
-      total={total}
+      {...rest}
     />
   );
 };

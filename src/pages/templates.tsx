@@ -16,7 +16,7 @@ import { withPageAuthRequired } from "@auth0/nextjs-auth0/client";
 import useSWR from "swr";
 import { State } from "src/components/State";
 import { TemplateFilterForm } from "src/components/TemplateFilterForm";
-import { fetcher, makeQuery } from "../utils";
+import { fetcher, getSortQuery, makeQuery } from "../utils";
 import { PAGE_SIZE } from "../config";
 import { getCounterStats } from "@sms77.io/counter";
 
@@ -35,14 +35,24 @@ export default withPageAuthRequired(function Templates() {
   const [errorAlert, setErrorAlert] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
   const [search, setSearch] = useState<string>("");
+  const [sort, setSort] = useState({
+    sortBy: "",
+    sortDir: "asc" as "asc" | "desc",
+  });
   const [offset, setOffset] = useState(0);
 
   const { data, isLoading, error, mutate } = useSWR<{
     result: Array<Template>;
     total: number;
-  }>(`/api/templates?offset=${offset}&limit=${PAGE_SIZE}${search}`, fetcher, {
-    revalidateOnFocus: false,
-  });
+  }>(
+    `/api/templates?offset=${
+      offset * PAGE_SIZE
+    }&limit=${PAGE_SIZE}${search}${getSortQuery(sort)}`,
+    fetcher,
+    {
+      revalidateOnFocus: false,
+    }
+  );
 
   const handleDelete = (id: number) => {
     setTemplateToDelete(data?.result.find((template) => template.id === id));
@@ -120,6 +130,7 @@ export default withPageAuthRequired(function Templates() {
   };
 
   const handleFilter = (filter: Partial<Template>) => {
+    setOffset(0);
     setSearch(makeQuery(filter));
   };
 
@@ -180,6 +191,9 @@ export default withPageAuthRequired(function Templates() {
                 offset={offset}
                 onDelete={handleDelete}
                 onEdit={handleEdit}
+                onSort={setSort}
+                sortBy={sort.sortBy}
+                sortDir={sort.sortDir}
                 onPaginate={setOffset}
               />
             ) : (
