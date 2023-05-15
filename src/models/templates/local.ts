@@ -1,5 +1,5 @@
 import { neru } from 'neru-alpha'
-import { Template } from 'src/pages/templates';
+import { Template } from '../../pages/templates';
 
 const TEMPLATE_KEY = 'templates';
 

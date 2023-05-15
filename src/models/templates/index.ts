@@ -1,7 +1,7 @@
-import { SORT_BY } from "src/config";
+import { SORT_BY } from "../../config";
 import { localDeleteTemplate, localGetTemplate, localGetTemplates, localSaveTemplate } from "./local";
 import { remoteAddTemplate, remoteDeleteTemplate } from "./remote";
-import { generateUniqueId } from "src/utils";
+import { generateUniqueId } from "../../utils";
 
 export interface GetTemplatesParams {
     name?: string,

@@ -1,9 +1,9 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { neru, Queue, QueueDetailsResponse } from 'neru-alpha';
+import { MAIN_QUEUE_NAME } from '../../../../config';
 
 const session = neru.getGlobalSession();
 const queueAPI = new Queue(session);
-const MAIN_QUEUE_NAME = 'deliveryQueue';
 
 const queueCache: Record<string, { details: QueueDetailsResponse, timestamp: string }> = {}
 

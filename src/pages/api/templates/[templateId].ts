@@ -1,6 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
-import { deleteTemplate, getTemplate, updateTemplate } from 'src/models/templates';
-import { addTemplateBodySchema } from 'src/schemas';
+import { deleteTemplate, getTemplate, updateTemplate } from '../../../models/templates';
+import { addTemplateBodySchema } from '../../../schemas';
 
 export default async function handler(
     req: NextApiRequest,

@@ -1,8 +1,8 @@
 import { Queue, neru } from 'neru-alpha';
 import type { NextApiRequest, NextApiResponse } from 'next'
-import { getAllCustomersByCampaignId, getCustomersTemplateIds } from 'src/models/campaigns';
-import { getTemplate, getTemplateAttributes } from 'src/models/templates';
-import { fillTemplate } from 'src/utils';
+import { addCampaign, getAllCustomersByCampaignId, getCustomersTemplateIds } from '../../../models/campaigns';
+import { getTemplate, getTemplateAttributes } from '../../../models/templates';
+import { fillTemplate } from '../../../utils';
 
 export default async function handler(
     req: NextApiRequest,
@@ -14,7 +14,7 @@ export default async function handler(
         case 'POST':
             const campaign = body;
 
-            // await addCampaign(campaign);
+            await addCampaign(campaign);
 
             const campaignId = campaign.CampaignID;
 

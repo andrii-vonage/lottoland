@@ -1,6 +1,7 @@
 import { neru } from 'neru-alpha';
-import { EVENT_TYPE, CHANNEL, METRIC_ID, OPTIMOVE_ENDPOINT, REQUEST_VERB } from 'src/config';
-import { addDaysToTimestamp, apiClient, timestampToYMD } from 'src/utils';
+import { EVENT_TYPE, CHANNEL, METRIC_ID, OPTIMOVE_ENDPOINT, REQUEST_VERB } from '../config';
+import { addDaysToTimestamp, timestampToYMD } from '../utils';
+import { apiClient } from '../apiClient';
 
 const state = neru.getAccountState();
 
@@ -87,6 +88,10 @@ const getActionName = async (id: number): Promise<{
     const r = await apiClient(url, { method: REQUEST_VERB.GET });
 
     return await r.json();
+}
+
+export const deleteCampaigns = async () => {
+    await state.delete(CAMPAIGN_KEY);
 }
 
 export const addCampaign = async (params: {

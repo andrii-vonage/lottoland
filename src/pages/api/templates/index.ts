@@ -1,7 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
-import { SORT_BY } from 'src/config';
-import { GetTemplatesParams, addTemplate, getTemplates } from 'src/models/templates';
-import { addTemplateBodySchema } from 'src/schemas';
+import { SORT_BY } from '../../../config';
+import { GetTemplatesParams, addTemplate, getTemplates } from '../../../models/templates';
+import { addTemplateBodySchema } from '../../../schemas';
 
 export default async function handler(
     req: NextApiRequest,

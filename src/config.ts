@@ -1,5 +1,7 @@
 export const PAGE_SIZE = 10;
 
+export const MAIN_QUEUE_NAME = 'deliveryQueue';
+
 export enum REQUEST_VERB {
     GET = 'GET',
     POST = 'POST',

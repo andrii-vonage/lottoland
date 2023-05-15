@@ -1,6 +1,6 @@
-import { CHANNEL, OPTIMOVE_ENDPOINT, REQUEST_VERB } from 'src/config';
-import { Template } from 'src/pages/templates';
-import { apiClient } from 'src/utils';
+import { CHANNEL, OPTIMOVE_ENDPOINT, REQUEST_VERB } from '../../config';
+import { Template } from '../../pages/templates';
+import { apiClient } from '../../apiClient';
 
 const API_BASE_URL = process.env.API_BASE_URL;
 

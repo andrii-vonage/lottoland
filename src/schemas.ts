@@ -13,3 +13,8 @@ export const updateQueueBodySchema = Joi.object({
   maxInflight: Joi.number().required(),
   msgPerSecond: Joi.number().required(),
 });
+
+export const callbackMessageSchema = Joi.object({
+  number: Joi.string().required(),
+  text: Joi.string().required(),
+});
