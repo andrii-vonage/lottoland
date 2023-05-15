@@ -17,7 +17,7 @@ import useSWR from "swr";
 import { State } from "src/components/State";
 import { TemplateFilterForm } from "src/components/TemplateFilterForm";
 import { fetcher, makeQuery } from "../utils";
-import { pageSize } from "../utils/config";
+import { PAGE_SIZE } from "../config";
 import { getCounterStats } from "@sms77.io/counter";
 
 export interface Template {
@@ -40,7 +40,7 @@ export default withPageAuthRequired(function Templates() {
   const { data, isLoading, error, mutate } = useSWR<{
     result: Array<Template>;
     total: number;
-  }>(`/api/templates?offset=${offset}&limit=${pageSize}${search}`, fetcher, {
+  }>(`/api/templates?offset=${offset}&limit=${PAGE_SIZE}${search}`, fetcher, {
     revalidateOnFocus: false,
   });
 

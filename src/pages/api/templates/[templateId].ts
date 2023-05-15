@@ -1,6 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
-import { addTemplate, deleteTemplate, getTemplate, updateTemplate } from 'src/models/templates';
-import validateRequestBody from './validateRequestBody';
+import { deleteTemplate, getTemplate, updateTemplate } from 'src/models/templates';
+import { addTemplateBodySchema } from 'src/schemas';
 
 export default async function handler(
     req: NextApiRequest,
@@ -9,41 +9,27 @@ export default async function handler(
     const { method, body } = req;
     const templateId = req.query.templateId as string;
 
-    if (!templateId) {
-        res.status(400).json({ message: 'Template ID is required' });
-        return;
-    }
-
     switch (method) {
-        case 'PUT':
-            try {
-                validateRequestBody(body);
-            } catch (error) {
-                if (error instanceof Error) {
-                    res.status(400).json({ message: error.message });
-                } else {
-                    res.status(400).json({ message: 'An unexpected error occurred during validation' });
-                }
-                return;
-            }
-
-            await updateTemplate(body);
-            res.status(200).json({ result: 'OK' })
-            break
-        case 'DELETE':
-            await deleteTemplate(templateId);
-            res.status(200).json({ result: 'OK' })
-            break
         case 'GET':
             const template = await getTemplate(templateId);
 
             if (!template) {
-                res.status(404).json({ message: 'Template not found' });
-                return;
+                return res.status(404).json({ message: 'Template not found' });
             }
 
-            res.status(200).json({ result: template })
-            break
+            return res.status(200).json({ result: template });
+        case 'PUT':
+            const { error } = addTemplateBodySchema.validate(req.body);
+
+            if (error) {
+                return res.status(400).json({ error: error.details[0].message });
+            }
+
+            await updateTemplate({ ...body, id: templateId });
+            return res.status(200).json({ result: 'OK' });
+        case 'DELETE':
+            await deleteTemplate(templateId);
+            return res.status(200).json({ result: 'OK' });
         default:
             res.setHeader('Allow', ['PUT', 'GET', 'DELETE'])
             res.status(405).end(`Method ${method} Not Allowed`)

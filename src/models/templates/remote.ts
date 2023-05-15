@@ -1,38 +1,37 @@
-import apiClient from 'src/utils/apiClient';
-import { IAddTemplatePayload, IDeleteTemplatePayload, ITemplate } from './interfaces';
-import { CHANNELS, OPTIMOVE_ENDPOINTS } from 'src/models/constants';
+import { CHANNEL, OPTIMOVE_ENDPOINT, REQUEST_VERB } from 'src/config';
+import { Template } from 'src/pages/templates';
+import { apiClient } from 'src/utils';
 
 const API_BASE_URL = process.env.API_BASE_URL;
 
-
-export const remoteAddTemplate = async (template: ITemplate) => {
-    const urlObj = new URL(OPTIMOVE_ENDPOINTS.ADD_CHANNEL_TEMPLATES, API_BASE_URL);
+export const remoteAddTemplate = async (template: Template) => {
+    const urlObj = new URL(OPTIMOVE_ENDPOINT.ADD_CHANNEL_TEMPLATES, API_BASE_URL);
     const query = new URLSearchParams();
-    query.append('ChannelID', CHANNELS.SMS.toString());
+    query.append('ChannelID', CHANNEL.SMS.toString());
     urlObj.search = query.toString();
 
     const url = urlObj.href;
 
-    const payload: IAddTemplatePayload[] = [{
+    const payload = [{
         TemplateID: template.id,
         TemplateName: template.name,
     }];
 
-    const method = "POST";
+    const method = REQUEST_VERB.POST;
     const body = JSON.stringify(payload);
 
     await apiClient(url, { method, body });
 }
 
 export const remoteDeleteTemplate = async (id: number) => {
-    const url = new URL(OPTIMOVE_ENDPOINTS.DELETE_CHANNEL_TEMPLATES, API_BASE_URL).href;
+    const url = new URL(OPTIMOVE_ENDPOINT.DELETE_CHANNEL_TEMPLATES, API_BASE_URL).href;
 
-    const payload: IDeleteTemplatePayload[] = [{
+    const payload = [{
         TemplateID: id,
-        ChannelID: CHANNELS.SMS,
+        ChannelID: CHANNEL.SMS,
     }];
 
-    const method = "POST";
+    const method = REQUEST_VERB.POST;
     const body = JSON.stringify(payload);
 
     await apiClient(url, { method, body });

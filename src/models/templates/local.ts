@@ -1,7 +1,9 @@
-import state from 'src/models/state';
-import { ITemplate } from './interfaces';
+import { neru } from 'neru-alpha'
+import { Template } from 'src/pages/templates';
 
 const TEMPLATE_KEY = 'templates';
+
+const state = neru.getAccountState();
 
 export const localGetTemplates = async () => {
     const templates = await state.hvals(TEMPLATE_KEY);
@@ -12,12 +14,12 @@ export const localGetTemplates = async () => {
     return r;
 }
 
-export const localGetTemplate = async (templateId: string) => {
+export const localGetTemplate = async (templateId: string): Promise<Template> => {
     const t = await state.hget(TEMPLATE_KEY, templateId);
     return JSON.parse(t);
 }
 
-export const localSaveTemplate = async (template: ITemplate) => {
+export const localSaveTemplate = async (template: Template) => {
     await state.hset(TEMPLATE_KEY, { [template.id]: JSON.stringify(template) });
 }
 

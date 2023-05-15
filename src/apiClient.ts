@@ -1,4 +1,6 @@
-import state from 'src/models/state';
+import { neru } from 'neru-alpha';
+const state = neru.getAccountState();
+
 const baseURL = process.env.API_BASE_URL;
 const USERNAME = process.env.API_USERNAME;
 const PASSWORD = process.env.API_PASSWORD;
@@ -31,11 +33,11 @@ const fetchAuthToken = async (username: string, password: string): Promise<strin
 };
 
 // Custom fetch function to handle token refreshing
-const apiClient = async (url: string, options: RequestInit = {}): Promise<Response> => {
+export const apiClient = async (url: string, options: RequestInit = {}): Promise<Response> => {
     const username = USERNAME;
     const password = PASSWORD;
 
-    let token:string = await state.get('authToken');
+    let token: string = await state.get('authToken');
 
     if (!token) {
         token = await fetchAuthToken(username, password);
@@ -70,5 +72,3 @@ const apiClient = async (url: string, options: RequestInit = {}): Promise<Respon
 
     return response;
 };
-
-export default apiClient;

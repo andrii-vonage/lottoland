@@ -9,7 +9,7 @@ import { ConfirmDialog } from "src/components/ConfirmDialog";
 import { fetcher, makeQuery } from "../utils";
 import useSWR from "swr";
 import { State } from "src/components/State";
-import { pageSize } from "../utils/config";
+import { PAGE_SIZE } from "../config";
 
 export interface Campaign {
   id: string;
@@ -24,7 +24,7 @@ export default withPageAuthRequired(function Home() {
   const { data, isLoading, error, mutate } = useSWR<{
     result: Array<Campaign>;
     total: number;
-  }>(`/api/campaigns?offset=${offset}&limit=${pageSize}${search}`, fetcher, {
+  }>(`/api/campaigns?offset=${offset}&limit=${PAGE_SIZE}${search}`, fetcher, {
     revalidateOnFocus: false,
   });
 

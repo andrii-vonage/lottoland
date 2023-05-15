@@ -29,7 +29,7 @@ import {
   ChevronUpIcon,
 } from "@chakra-ui/icons";
 import styled from "@emotion/styled";
-import * as config from "../utils/config";
+import * as config from "../config";
 
 interface ColumnHeader<T extends {}> {
   Header?: string;
@@ -82,7 +82,7 @@ export const CustomTable = <T extends object>({
       manualPagination: true,
       autoResetPage: false,
       autoResetFilters: false,
-      pageCount: Math.ceil(total / config.pageSize),
+      pageCount: Math.ceil(total / config.PAGE_SIZE),
       pageIndex: offset,
     },
     useSortBy,

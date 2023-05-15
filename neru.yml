@@ -4,7 +4,11 @@ instance:
   name: dev
   runtime: nodejs16
   region: aws.euw1
-  application-id: 1016e212-2da5-4239-b4f5-7233804fec00
+  application-id: 05f6b44e-0029-43d1-853b-89e398229a15
+  capabilities:
+    - messaging
+  configurations:
+    vonage-number: "447312263020"
   entrypoint:
     - npm
     - start

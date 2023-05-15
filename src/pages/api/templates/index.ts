@@ -1,8 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
-import { addTemplate, getTemplates } from 'src/models/templates';
-import validateRequestBody from './validateRequestBody';
-import { SORT_BY } from 'src/models/constants';
-import { IGetTemplatesParams } from 'src/models/templates/interfaces';
+import { SORT_BY } from 'src/config';
+import { GetTemplatesParams, addTemplate, getTemplates } from 'src/models/templates';
+import { addTemplateBodySchema } from 'src/schemas';
 
 export default async function handler(
     req: NextApiRequest,
@@ -13,14 +12,10 @@ export default async function handler(
 
     switch (method) {
         case 'POST':
-            try {
-                validateRequestBody(body);
-            } catch (error) {
-                if (error instanceof Error) {
-                    res.status(400).json({ message: error.message });
-                } else {
-                    res.status(400).json({ message: 'An unexpected error occurred during validation' });
-                }
+            const { error } = addTemplateBodySchema.validate(req.body);
+
+            if (error) {
+                res.status(400).json({ error: error.details[0].message });
                 return;
             }
 
@@ -28,7 +23,7 @@ export default async function handler(
             res.status(201).json({ result: 'OK' })
             break
         case 'GET':
-            const params: IGetTemplatesParams = {};
+            const params: GetTemplatesParams = {};
 
             if (name) {
                 params.name = name as string;
@@ -51,7 +46,7 @@ export default async function handler(
             }
 
             const r = await getTemplates(params);
-            res.status(200).json(r)
+            res.status(200).json(r);
             break
         default:
             res.setHeader('Allow', ['POST', 'GET'])
