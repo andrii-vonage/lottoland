@@ -1,6 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { deleteTemplate, getTemplate, updateTemplate } from '../../../models/templates';
-import { addTemplateBodySchema } from '../../../schemas';
+import { updateTemplateBodySchema } from '../../../schemas';
 
 export default async function handler(
     req: NextApiRequest,
@@ -19,13 +19,13 @@ export default async function handler(
 
             return res.status(200).json({ result: template });
         case 'PUT':
-            const { error } = addTemplateBodySchema.validate(req.body);
+            const { error } = updateTemplateBodySchema.validate(req.body);
 
             if (error) {
                 return res.status(400).json({ error: error.details[0].message });
             }
 
-            await updateTemplate({ ...body, id: templateId });
+            await updateTemplate(body);
             return res.status(200).json({ result: 'OK' });
         case 'DELETE':
             await deleteTemplate(templateId);

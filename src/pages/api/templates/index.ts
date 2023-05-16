@@ -12,6 +12,8 @@ export default async function handler(
 
     switch (method) {
         case 'POST':
+            delete req.body.id;
+
             const { error } = addTemplateBodySchema.validate(req.body);
 
             if (error) {

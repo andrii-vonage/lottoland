@@ -2,6 +2,7 @@ import { neru } from 'neru-alpha';
 import { EVENT_TYPE, CHANNEL, METRIC_ID, OPTIMOVE_ENDPOINT, REQUEST_VERB } from '../config';
 import { addDaysToTimestamp, timestampToYMD } from '../utils';
 import { apiClient } from '../apiClient';
+import path from 'path';
 
 const state = neru.getAccountState();
 
@@ -18,7 +19,8 @@ export interface GetCampaignCustomersResponseItem {
 
 export const registerEventListener = async (callback: string) => {
     const url = new URL(OPTIMOVE_ENDPOINT.REGISTER_EVENT_LISTENER, API_BASE_URL).href
-    const callbackUrl = new URL(callback, appURL).href
+    const baseURL = new URL(appURL);
+    const callbackUrl = new URL(path.join(baseURL.pathname, callback), baseURL.origin).href
     const method = REQUEST_VERB.POST;
 
     const body = JSON.stringify({
@@ -27,7 +29,18 @@ export const registerEventListener = async (callback: string) => {
         ListenerURL: callbackUrl,
     });
 
-    await apiClient(url, { method, body });
+    console.log("registerEventListener with body", body);
+    const res = await apiClient(url, { method, body });
+
+    if (res.ok) {
+        console.log("registerEventListener response is ok");
+        console.log("registerEventListener response", await res.text());
+        return;
+    } else {
+        console.log("registerEventListener response is not ok");
+        console.log("registerEventListener response status", res.status);
+        console.log("registerEventListener response", await res.text());
+    }
 }
 
 const getCampaignDetails = async (id: number): Promise<{
@@ -101,9 +114,13 @@ export const addCampaign = async (params: {
 }) => {
     const campaignStartDate = timestampToYMD(params.TimeStamp);
     const campaignDetails = await getCampaignDetails(params.CampaignID);
-    const targetGroupName = await getTargetGroupName(campaignDetails.TargetGroupID);
-    const actionsWithIDs = await getActionsByTargetGroup(campaignDetails.TargetGroupID, campaignStartDate);
-    const actionNames = (await Promise.all(actionsWithIDs.map((a => getActionName(a.ActionID))))).map(r => r.ActionName);
+    // TODO: Optimove doesn't provide a way to get the target group name
+    // const targetGroupName = await getTargetGroupName(campaignDetails.TargetGroupID);
+    const targetGroupName = `TestName:${campaignDetails.TargetGroupID.toString()}`;
+    // TODO: Optimove doesn't provide a way to get the action name
+    // const actionsWithIDs = await getActionsByTargetGroup(campaignDetails.TargetGroupID, campaignStartDate);
+    // const actionNames = (await Promise.all(actionsWithIDs.map((a => getActionName(a.ActionID))))).map(r => r.ActionName);
+    const actionNames = [`TestAction:${campaignDetails.TargetGroupID.toString()}`];
     const campaignEndDate = timestampToYMD(addDaysToTimestamp(params.TimeStamp, campaignDetails.Duration));
 
     const c: {
