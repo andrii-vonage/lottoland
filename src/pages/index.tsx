@@ -12,116 +12,125 @@ import { State } from "src/components/State";
 import { PAGE_SIZE } from "../config";
 
 export interface Campaign {
-  id: string;
-  targetGroupName: string;
-  actions: Array<string>;
-  startDate: string;
-  endDate: string;
+    id: string;
+    targetGroupName: string;
+    actions: Array<string>;
+    startDate: string;
+    endDate: string;
 }
 
 export default withPageAuthRequired(function Home() {
-  const [campaignToStop, setCampaignToStop] = useState<Campaign>();
-  const [successAlert, setSuccessAlert] = useState<string | null>(null);
-  const [search, setSearch] = useState<string>("");
-  const [offset, setOffset] = useState(0);
-  const [sort, setSort] = useState({
-    sortBy: "",
-    sortDir: "asc" as "asc" | "desc",
-  });
+    const [campaignToStop, setCampaignToStop] = useState<Campaign>();
+    const [successAlert, setSuccessAlert] = useState<string | null>(null);
+    const [errorAlert, setErrorAlert] = useState<string | null>(null);
+    const [search, setSearch] = useState<string>("");
+    const [offset, setOffset] = useState(0);
+    const [sort, setSort] = useState({
+        sortBy: "",
+        sortDir: "asc" as "asc" | "desc",
+    });
 
-  const { data, isLoading, error, mutate } = useSWR<{
-    result: Array<Campaign>;
-    total: number;
-  }>(
-    `/api/campaigns?offset=${
-      offset * PAGE_SIZE
-    }&limit=${PAGE_SIZE}${search}${getSortQuery(sort)}`,
-    fetcher,
-    {
-      revalidateOnFocus: false,
-    }
-  );
+    const { data, isLoading, error, mutate } = useSWR<{
+        result: Array<Campaign>;
+        total: number;
+    }>(`/api/campaigns?offset=${offset * PAGE_SIZE}&limit=${PAGE_SIZE}${search}${getSortQuery(sort)}`, fetcher, {
+        revalidateOnFocus: false,
+    });
 
-  const handleFilter = (filter: Partial<Campaign>) => {
-    setSearch(makeQuery(filter));
-  };
+    const handleFilter = (filter: Partial<Campaign>) => {
+        setSuccessAlert(null);
+        setErrorAlert(null);
 
-  const handleStop = (id: string) => {
-    setCampaignToStop(data?.result.find((campaign) => campaign.id === id));
-  };
+        setSearch(makeQuery(filter));
+    };
 
-  const stopCampaign = async () => {
-    if (campaignToStop) {
-      await fetcher(`/api/campaigns/${campaignToStop.id}`, {
-        method: "POST",
-      });
+    const handleStop = (id: string) => {
+        setSuccessAlert(null);
+        setErrorAlert(null);
 
-      mutate();
-      setSuccessAlert("Campaign stopped successfully");
-    }
+        setCampaignToStop(data?.result.find((campaign) => campaign.id === id));
+    };
 
-    setCampaignToStop(undefined);
-  };
+    const stopCampaign = async () => {
+        if (campaignToStop) {
+            try {
+                await fetcher(`/api/campaigns/${campaignToStop.id}/pause`, {
+                    method: "POST",
+                });
 
-  return (
-    <>
-      <Head>
-        <meta name="description" content="Campaigns overview" />
-      </Head>
-      <main>
-        <Flex direction="column">
-          <Navigation />
-          <Heading mb={8} ml={8}>
-            Running campaigns
-          </Heading>
-          {successAlert && (
-            <Alert status="success" marginBottom={8}>
-              <AlertIcon />
-              {successAlert}
-            </Alert>
-          )}
+                mutate();
+                setSuccessAlert("Campaign stopped successfully");
+            } catch (error: unknown) {
+                setCampaignToStop(undefined);
+                setErrorAlert((error as Error).message);
+                return;
+            }
+        }
 
-          <CampaignFilterForm onFilter={handleFilter} />
-          <Flex direction="column" marginX={8}>
-            {isLoading ? (
-              <Spinner />
-            ) : error ? (
-              <State
-                status="error"
-                title="Something went wrong"
-                description={error.message}
-              />
-            ) : data?.result.length ? (
-              <CampaignsList
-                data={data.result}
-                onStop={handleStop}
-                total={data.total}
-                onPaginate={setOffset}
-                offset={offset}
-                onSort={setSort}
-                sortBy={sort.sortBy}
-                sortDir={sort.sortDir}
-              />
-            ) : (
-              <State
-                status="info"
-                title="No templates found"
-                description="Add new template to get started"
-              />
-            )}
+        setCampaignToStop(undefined);
+    };
 
-            <ConfirmDialog
-              isOpen={Boolean(campaignToStop?.id)}
-              onClose={() => setCampaignToStop(undefined)}
-              onConfirm={stopCampaign}
-              title="Stop campaign"
-              description=" Are you sure you want to stop this campaign?"
-              confirmText="Yes. Stop"
-              cancelText="Cancel"
-            />
-          </Flex>
-        </Flex>
-      </main>
-    </>
-  );
+    return (
+        <>
+            <Head>
+                <meta name="description" content="Campaigns overview" />
+            </Head>
+            <main>
+                <Flex direction="column">
+                    <Navigation />
+                    <Heading mb={8} ml={8}>
+                        Running campaigns
+                    </Heading>
+                    {successAlert && (
+                        <Alert status="success" marginBottom={8}>
+                            <AlertIcon />
+                            {successAlert}
+                        </Alert>
+                    )}
+                    {errorAlert && (
+                        <Alert status="error" marginBottom={8}>
+                            <AlertIcon />
+                            {String(errorAlert)}
+                        </Alert>
+                    )}
+
+                    <CampaignFilterForm onFilter={handleFilter} />
+                    <Flex direction="column" marginX={8}>
+                        {isLoading ? (
+                            <Spinner />
+                        ) : error ? (
+                            <State status="error" title="Something went wrong" description={error.message} />
+                        ) : data?.result.length ? (
+                            <CampaignsList
+                                data={data.result}
+                                onStop={handleStop}
+                                total={data.total}
+                                onPaginate={setOffset}
+                                offset={offset}
+                                onSort={setSort}
+                                sortBy={sort.sortBy}
+                                sortDir={sort.sortDir}
+                            />
+                        ) : (
+                            <State
+                                status="info"
+                                title="No templates found"
+                                description="Add new template to get started"
+                            />
+                        )}
+
+                        <ConfirmDialog
+                            isOpen={Boolean(campaignToStop?.id)}
+                            onClose={() => setCampaignToStop(undefined)}
+                            onConfirm={stopCampaign}
+                            title="Stop campaign"
+                            description=" Are you sure you want to stop this campaign?"
+                            confirmText="Yes. Stop"
+                            cancelText="Cancel"
+                        />
+                    </Flex>
+                </Flex>
+            </main>
+        </>
+    );
 });
