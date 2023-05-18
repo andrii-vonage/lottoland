@@ -38,6 +38,7 @@ export default withPageAuthRequired(function Home() {
     });
 
     const handleFilter = (filter: Partial<Campaign>) => {
+        console.log("FILTER", filter);
         setSuccessAlert(null);
         setErrorAlert(null);
 
