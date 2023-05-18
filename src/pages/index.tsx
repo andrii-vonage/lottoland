@@ -114,8 +114,8 @@ export default withPageAuthRequired(function Home() {
                         ) : (
                             <State
                                 status="info"
-                                title="No templates found"
-                                description="Add new template to get started"
+                                title="No campaigns found"
+                                description="Add new campaign to get started"
                             />
                         )}
 
