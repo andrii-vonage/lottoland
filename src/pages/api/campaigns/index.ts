@@ -1,5 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
-import { deleteCampaigns, getCampaigns } from '../../../models/campaigns';
+import { deleteCampaignsHandler, getCampaignsHandler } from '../../../handlers';
 
 export default async function handler(
     req: NextApiRequest,
@@ -9,12 +9,9 @@ export default async function handler(
 
     switch (method) {
         case 'GET':
-            const c = await getCampaigns();
-            res.status(200).json({ result: c })
-            break
+            return getCampaignsHandler(req, res);
         case 'DELETE':
-            await deleteCampaigns();
-            res.status(200).send('OK');
+            return deleteCampaignsHandler(req, res);
         default:
             res.setHeader('Allow', ['GET', 'DELETE'])
             res.status(405).end(`Method ${method} Not Allowed`)

@@ -1,19 +1,14 @@
-import type { NextApiRequest, NextApiResponse } from 'next'
+import type { NextApiRequest, NextApiResponse } from "next";
+import { onMessageEventHandler } from "../../../handlers";
 
-export default async function handler(
-    req: NextApiRequest,
-    res: NextApiResponse
-) {
-    const { method, body } = req;
+export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+    const { method } = req;
 
     switch (method) {
-        case 'POST':
-            console.log("Event is:", body);
-
-            res.status(200).send('OK');
-            break;
+        case "POST":
+            return onMessageEventHandler(req, res);
         default:
-            res.setHeader('Allow', ['POST'])
-            res.status(405).end(`Method ${method} Not Allowed`)
+            res.setHeader("Allow", ["POST"]);
+            res.status(405).end(`Method ${method} Not Allowed`);
     }
 }

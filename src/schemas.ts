@@ -24,7 +24,9 @@ export const updateQueueBodySchema = Joi.object({
   msgPerSecond: Joi.number().required(),
 });
 
-export const callbackMessageSchema = Joi.object({
+export const onMessageSchema = Joi.object({
+  campaignId: Joi.number().required(),
+  templateId: Joi.number().required(),
   number: Joi.string().required(),
   text: Joi.string().required(),
 });
@@ -33,4 +35,11 @@ export const onCampaignBodySchema = Joi.object({
   EventTypeID: Joi.number().required(),
   TimeStamp: Joi.string().required(),
   CampaignID: Joi.number().required(),
+});
+
+export const onQueueNameBodySchema = Joi.object({
+  campaignId: Joi.number().required(),
+  templateId: Joi.number().required(),
+  number: Joi.string().required(),
+  text: Joi.string().required(),
 });

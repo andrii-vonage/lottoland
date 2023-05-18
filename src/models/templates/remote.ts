@@ -1,13 +1,11 @@
-import { CHANNEL, OPTIMOVE_ENDPOINT, REQUEST_VERB } from '../../config';
+import { CAMPAIGN_CHANNEL, OPTIMOVE_ENDPOINT, REQUEST_VERB, API_BASE_URL } from '../../config';
 import { Template } from '../../pages/templates';
 import { apiClient } from '../../apiClient';
-
-const API_BASE_URL = process.env.API_BASE_URL;
 
 export const remoteAddTemplate = async (template: Template) => {
     const urlObj = new URL(OPTIMOVE_ENDPOINT.ADD_CHANNEL_TEMPLATES, API_BASE_URL);
     const query = new URLSearchParams();
-    query.append('ChannelID', CHANNEL.SMS.toString());
+    query.append('ChannelID', CAMPAIGN_CHANNEL.SMS.toString());
     urlObj.search = query.toString();
 
     const url = urlObj.href;
@@ -28,7 +26,7 @@ export const remoteDeleteTemplate = async (id: number) => {
 
     const payload = [{
         TemplateID: id,
-        ChannelID: CHANNEL.SMS,
+        ChannelID: CAMPAIGN_CHANNEL.SMS,
     }];
 
     const method = REQUEST_VERB.POST;

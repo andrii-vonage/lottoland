@@ -1,12 +1,8 @@
-import { neru } from 'neru-alpha'
 import { Template } from '../../pages/templates';
-
-const TEMPLATE_KEY = 'templates';
-
-const state = neru.getAccountState();
+import { STATE_TABLE, state } from '../state';
 
 export const localGetTemplates = async () => {
-    const templates = await state.hvals(TEMPLATE_KEY);
+    const templates = await state.hvals(STATE_TABLE.TEMPLATES);
     const r = [];
     for (const template of templates) {
         r.push(JSON.parse(template));
@@ -15,14 +11,14 @@ export const localGetTemplates = async () => {
 }
 
 export const localGetTemplate = async (templateId: string): Promise<Template> => {
-    const t = await state.hget(TEMPLATE_KEY, templateId);
+    const t = await state.hget(STATE_TABLE.TEMPLATES, templateId);
     return JSON.parse(t);
 }
 
 export const localSaveTemplate = async (template: Template) => {
-    await state.hset(TEMPLATE_KEY, { [template.id]: JSON.stringify(template) });
+    await state.hset(STATE_TABLE.TEMPLATES, { [template.id]: JSON.stringify(template) });
 }
 
 export const localDeleteTemplate = async (templateId: string) => {
-    await state.hdel(TEMPLATE_KEY, templateId);
+    await state.hdel(STATE_TABLE.TEMPLATES, templateId);
 }

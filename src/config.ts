@@ -1,6 +1,6 @@
 export const PAGE_SIZE = 10;
 
-export const MAIN_QUEUE_NAME = 'deliveryQueue';
+export const API_BASE_URL = process.env.API_BASE_URL;
 
 export enum REQUEST_VERB {
     GET = 'GET',
@@ -9,7 +9,7 @@ export enum REQUEST_VERB {
     DELETE = 'DELETE'
 }
 
-export enum CHANNEL {
+export enum CAMPAIGN_CHANNEL {
     SMS = 505,
 }
 
@@ -35,7 +35,7 @@ export enum OPTIMOVE_ENDPOINT {
     GET_ACTION_NAME = 'current/actions/GetActionName',
 }
 
-export enum METRIC_ID {
+export enum OPTIMOVE_DELIVERY_STATUS {
     SENT = 0,
     DELIVERED = 1,
     OPENED = 2,
