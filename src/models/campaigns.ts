@@ -35,7 +35,7 @@ export const getCampaigns = async (params: GetTCampaignsParams) => {
     }
 
     if (id) {
-        filteredData = filteredData.filter((item) => item.id === id);
+        filteredData = filteredData.filter((item) => item.id.toString().includes(id.toString()));
     }
 
     // Sort data

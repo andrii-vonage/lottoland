@@ -17,7 +17,7 @@ export const onCampaignHandler = async (req: NextApiRequest, res: NextApiRespons
 
         await onCampaign(body);
 
-        return res.status(200).send("OK");
+        return res.status(200).json({result: "OK"});
     } catch (err) {
         console.error("OnCampaignHandler:", err);
         return res.status(500).json({ error: err.message });
@@ -36,7 +36,7 @@ export const onMessageHandler = async (req: NextApiRequest, res: NextApiResponse
 
         await onMessage(body);
 
-        return res.status(200).send("OK");
+        return res.status(200).json({result: "OK"});
     } catch (err) {
         console.error("OnMessageHandler:", err);
         return res.status(500).json({ error: err.message });
@@ -48,7 +48,7 @@ export const onMessageEventHandler = async (req: NextApiRequest, res: NextApiRes
         console.log("OnMessageEventHandler:", req.body);
         await onMessageEvent(req.body);
 
-        res.status(200).send("OK");
+        res.status(200).json({result: "OK"});
     } catch (err) {
         console.error("OnMessageEventHandler:", err);
         return res.status(500).json({ error: err.message });
@@ -69,7 +69,7 @@ export const onQueueMessageHandler = async (req: NextApiRequest, res: NextApiRes
 
         await onQueueMessage(queueName, message);
 
-        return res.status(200).send("OK");
+        return res.status(200).json({result: "OK"});
     } catch (err) {
         console.error("OnQueueMessageHandler:", err);
         return res.status(500).json({ error: err.message });

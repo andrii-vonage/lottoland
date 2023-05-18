@@ -3,6 +3,12 @@ import { getCampaignDetails } from "./campaignDetails";
 import { state, STATE_TABLE } from "./state";
 import { API_BASE_URL, CAMPAIGN_CHANNEL, OPTIMOVE_DELIVERY_STATUS, OPTIMOVE_ENDPOINT, REQUEST_VERB } from "../config";
 import { apiClient } from "../apiClient";
+import { queue } from "./queue";
+
+export enum CAMPAIGN_STATUS {
+    RUNNING = "Running",
+    PAUSED = "Paused",
+}
 
 export class Campaign {
     id: number;
@@ -10,6 +16,7 @@ export class Campaign {
     actions: string[];
     startDate: string;
     endDate: string;
+    status: CAMPAIGN_STATUS;
 
     constructor(params: {
         id: number;
@@ -23,6 +30,7 @@ export class Campaign {
         this.actions = params.actions;
         this.startDate = params.startDate;
         this.endDate = params.endDate;
+        this.status = CAMPAIGN_STATUS.RUNNING;
     }
 }
 
@@ -87,12 +95,13 @@ export const addCampaign = async (params: { EventTypeID: number; TimeStamp: stri
     // const targetGroupName = await getTargetGroupName(campaignDetails.TargetGroupID);
     const targetGroupName = `TestName:${campaignDetails.TargetGroupID.toString()}`;
     // TODO: Optimove doesn't provide a way to get the action name
-    const actionsWithIDs = await getActionsByTargetGroup(campaignDetails.TargetGroupID, campaignStartDate);
+    // const actionsWithIDs = await getActionsByTargetGroup(campaignDetails.TargetGroupID, campaignStartDate);
     // const actionNames = (await Promise.all(actionsWithIDs.map((a) => getActionName(a.ActionID)))).map(
     //     (r) => r.ActionName
     // );
     const actionNames = [`TestAction:${campaignDetails.TargetGroupID.toString()}`];
     const campaignEndDate = timestampToYMD(addDaysToTimestamp(params.TimeStamp, campaignDetails.Duration));
+
 
     const campaign = new Campaign({
         id: params.CampaignID,
@@ -193,3 +202,23 @@ export const updateCampaignMetrics = async (
 
     return apiClient(url, { method, body: JSON.stringify(body) });
 };
+
+export const pauseCampaign = async (id: string) => {
+    await queue.pauseQueue(id).execute();
+    await updateCampaignStatus(id, CAMPAIGN_STATUS.PAUSED);
+}
+
+const updateCampaignStatus = async (id: string, status: CAMPAIGN_STATUS) => {
+    const campaign = await state.hget(STATE_TABLE.CAMPAIGNS, id);
+
+    if (!campaign) {
+        throw new Error(`Campaign with id ${id} not found`);
+    }
+
+    const c: Campaign = JSON.parse(campaign);
+    c.status = status;
+
+    await state.hset(STATE_TABLE.CAMPAIGNS, { [c.id]: JSON.stringify(c) });
+}
+
+

@@ -6,7 +6,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     switch (method) {
         case "POST":
-            return await pauseCampaignByIdHandler(req, res);
+            return pauseCampaignByIdHandler(req, res);
         default:
             res.setHeader("Allow", ["POST"]);
             res.status(405).end(`Method ${method} Not Allowed`);

@@ -1,7 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import { deleteCampaigns, getCampaigns, GetTCampaignsParams } from "../models/campaigns";
-import { queue } from "../models/queue";
 import { SORT_BY } from "../config";
+import { pauseCampaign } from "src/models/campaign";
 
 export const getCampaignsHandler = async (req: NextApiRequest, res: NextApiResponse) => {
     try {
@@ -33,7 +33,7 @@ export const getCampaignsHandler = async (req: NextApiRequest, res: NextApiRespo
         }
 
         const campaigns = await getCampaigns(params);
-        return res.status(200).json({ result: campaigns });
+        return res.status(200).json(campaigns);
     } catch (err) {
         console.error("GetCampaigns", err);
         return res.status(500).json({ error: err.message });
@@ -43,7 +43,7 @@ export const getCampaignsHandler = async (req: NextApiRequest, res: NextApiRespo
 export const deleteCampaignsHandler = async (req: NextApiRequest, res: NextApiResponse) => {
     try {
         await deleteCampaigns();
-        return res.status(200).send("OK");
+        return res.status(200).json({ result: "OK" });
     } catch (err) {
         console.error("DeleteCampaigns:", err);
         return res.status(500).json({ error: err.message });
@@ -55,7 +55,9 @@ export const pauseCampaignByIdHandler = async (req: NextApiRequest, res: NextApi
         const campaignId = req.query.campaignId as string;
         console.log("PauseCampaignByIdHandler:", campaignId);
 
-        await queue.pauseQueue(campaignId).execute();
+        await pauseCampaign(campaignId);
+
+        return res.status(200).json({ result: "OK" });
     } catch (err) {
         console.error("PauseCampaignByIdHandler:", err);
         return res.status(500).json({ error: err.message });

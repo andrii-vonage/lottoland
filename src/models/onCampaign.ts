@@ -25,8 +25,8 @@ export const onCampaign = async (body: OnCampaignBody): Promise<void> => {
 
     try {
         await addCampaign(campaign);
-    } catch (e) {
-        throw new Error("Couldn't add campaign to the database");
+    } catch (err) {
+        throw new Error("Couldn't add campaign to the database:" + err.message);
     }
 
     try {
