@@ -17,6 +17,7 @@ export interface Template {
     id: number;
     name: string;
     smsText: string;
+    optOutUrl: string;
     senderIdFieldName: string;
 }
 
@@ -91,8 +92,9 @@ export default withPageAuthRequired(function Templates() {
         const name = template.name.trim();
         const senderIdFieldName = template.senderIdFieldName.trim();
         const smsText = template.smsText.trim();
+        const optOutUrl = template.optOutUrl;
 
-        if (name && senderIdFieldName && smsText) {
+        if (name && senderIdFieldName && smsText && optOutUrl) {
             const { charCount, charLimit } = getCounterStats(smsText);
             const maxSmsTextLength = charLimit * 2;
             if (charCount > maxSmsTextLength) {
@@ -103,7 +105,7 @@ export default withPageAuthRequired(function Templates() {
             try {
                 setBusy(true);
                 await fetcher(id ? `/api/templates/${id}` : "/api/templates", {
-                    body: JSON.stringify({ id, name, senderIdFieldName, smsText }),
+                    body: JSON.stringify({ id, name, senderIdFieldName, smsText, optOutUrl }),
                     headers: { "Content-Type": "application/json" },
                     method: id ? "PUT" : "POST",
                 });

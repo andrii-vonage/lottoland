@@ -1,90 +1,101 @@
 import { Campaign } from "./pages";
 import { Template } from "./pages/templates";
+import countries from "./contries.json";
 
 let counter = 0;
 
 export const generateUniqueId = () => {
-  const timestamp = Date.now(); // Get the current timestamp in milliseconds
-  counter = (counter + 1) % 1000; // Increment the counter and wrap it around at 1000
-  return timestamp * 1000 + counter; // Combine the timestamp and counter to create a unique ID
+    const timestamp = Date.now(); // Get the current timestamp in milliseconds
+    counter = (counter + 1) % 1000; // Increment the counter and wrap it around at 1000
+    return timestamp * 1000 + counter; // Combine the timestamp and counter to create a unique ID
 };
 
 export function timestampToYMD(timestamp: string): string {
-  const date = new Date(timestamp);
-  const year = date.getFullYear();
-  const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are 0-based in JavaScript
-  const day = String(date.getDate()).padStart(2, '0');
+    const date = new Date(timestamp);
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0"); // Months are 0-based in JavaScript
+    const day = String(date.getDate()).padStart(2, "0");
 
-  return `${year}-${month}-${day}`;
+    return `${year}-${month}-${day}`;
 }
 
 export function addDaysToTimestamp(timestamp: string, days: number) {
-  let date = new Date(timestamp);
-  date.setDate(date.getDate() + days);
+    let date = new Date(timestamp);
+    date.setDate(date.getDate() + days);
 
-  let year = date.getFullYear();
-  let month = String(date.getMonth() + 1).padStart(2, '0');  // JavaScript months are 0-based
-  let day = String(date.getDate()).padStart(2, '0');
-  let hours = String(date.getHours()).padStart(2, '0');
-  let minutes = String(date.getMinutes()).padStart(2, '0');
-  let seconds = String(date.getSeconds()).padStart(2, '0');
+    let year = date.getFullYear();
+    let month = String(date.getMonth() + 1).padStart(2, "0"); // JavaScript months are 0-based
+    let day = String(date.getDate()).padStart(2, "0");
+    let hours = String(date.getHours()).padStart(2, "0");
+    let minutes = String(date.getMinutes()).padStart(2, "0");
+    let seconds = String(date.getSeconds()).padStart(2, "0");
 
-  return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+    return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
 }
 
 export function fillTemplate(template: string, dictionary: Record<string, string>) {
-  return template.replace(/{{\s*(.*?)\s*}}/g, function (_, key) {
-    return dictionary[key.trim()] || '';
-  });
+    return template.replace(/{{\s*(.*?)\s*}}/g, function (_, key) {
+        return dictionary[key.trim()] || "";
+    });
 }
 
 interface SortOptions {
-  sortBy: string;
-  sortDir: "asc" | "desc";
+    sortBy: string;
+    sortDir: "asc" | "desc";
 }
 
 interface PaginationOptions {
-  offset?: number;
-  total: number;
+    offset?: number;
+    total: number;
 }
 
 export interface TableOptions extends SortOptions, PaginationOptions {
-  onSort: (data: SortOptions) => void;
-  onPaginate: (offset: number) => void;
+    onSort: (data: SortOptions) => void;
+    onPaginate: (offset: number) => void;
 }
 
 export const fetcher = (input: RequestInfo, init?: RequestInit) =>
-  fetch(input, init).then(async (res) => {
-    if (res.ok) {
-      return res.json();
-    }
+    fetch(input, init).then(async (res) => {
+        if (res.ok) {
+            return res.json();
+        }
 
-    const { message } = (await res.json()) ?? { message: "Unknown error" };
+        const { message } = (await res.json()) ?? { message: "Unknown error" };
 
-    throw new Error(message);
-  });
+        throw new Error(message);
+    });
 
-export const makeQuery = (
-  filter: Partial<Template> | Partial<Campaign> | SortOptions
-) => {
-  let queryParams: Array<string> = [];
+export const makeQuery = (filter: Partial<Template> | Partial<Campaign> | SortOptions) => {
+    let queryParams: Array<string> = [];
 
-  Object.entries(filter).forEach(([key, value]) => {
-    const trimmedValue = String(value)?.trim();
+    Object.entries(filter).forEach(([key, value]) => {
+        const trimmedValue = String(value)?.trim();
 
-    if (trimmedValue) {
-      queryParams.push(`${key}=${trimmedValue}`);
-    }
-  });
+        if (trimmedValue) {
+            queryParams.push(`${key}=${trimmedValue}`);
+        }
+    });
 
-  return queryParams ? `&${queryParams.join("&")}` : "";
+    return queryParams ? `&${queryParams.join("&")}` : "";
 };
 
 export const getSortQuery = (sort: SortOptions) => {
-  const { sortBy, sortDir } = sort;
-  if (sortBy) {
-    return makeQuery({ sortBy, sortDir });
-  }
+    const { sortBy, sortDir } = sort;
+    if (sortBy) {
+        return makeQuery({ sortBy, sortDir });
+    }
 
-  return "";
+    return "";
+};
+
+export const getCountry = (code: string) => {
+    return (
+        countries.find((country) => country.code === code) ?? {
+            name: "United Kingdom",
+            code: "GB",
+            emoji: "🇬🇧",
+            unicode: "U+1F1EC U+1F1E7",
+            image: "https://cdn.jsdelivr.net/npm/country-flag-emoji-json@2.0.0/dist/images/GB.svg",
+        }
+    );
 };

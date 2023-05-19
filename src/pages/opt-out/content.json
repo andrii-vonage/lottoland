@@ -1,0 +1,83 @@
+{
+    "GB": {
+        "logo": "/lottoland.png",
+        "heading": "Opt Out",
+        "message": "Are you sure you would like to opt out from receiving text messages from us?<br /><br />You may miss alerts informing you of cash payouts, promotions and free line bets.<br /><br /><span class=\"highlight\">If you would like to go ahead, please enter your mobile number in the local format below.</span>",
+        "label": "Number:",
+        "placeholder": "Your number",
+        "button": "Continue",
+        "footer": "If you would like to re-subscribe at any time, please update your Contact Preferences in your Lottoland account"
+    },
+    "DE": {
+        "logo": "/lottoland.png",
+        "heading": "Abmelden",
+        "message": "Schade, dass du dich von unserem SMS Newsletter abmelden möchtest.<br /><br />Bist du sicher, dass du zukünftig keine Infos mehr über aktuelle Auszahlungen, Angebote und Freispiele von uns erhalten möchtest?<br /><br /><span class=\"highlight\">Wenn du den SMS Service abbestellen möchtest, trage bitte deine Mobilnummer im lokalen Format unten ein.</span>",
+        "label": "Nummer:",
+        "placeholder": "Nummer",
+        "button": "Abmelden",
+        "footer": "Du kannst dich jederzeit wieder anmelden, indem du deine Lottoland-Kontoeinstellungen aktualisierst."
+    },
+    "PL": {
+        "logo": "/lottoland.png",
+        "heading": "Wypisz się",
+        "message": "Czy jesteś pewny że nie chcesz więcej otrzymywać od nas wiadomości tekstowych?<br /><br />Nie będziesz otrzymywać informacji o wypłatach, promocjach i darmowych zakładach.<br /><br /><span class=\"highlight\">Jeśli mimo wszystko chcesz wypisać się z listy wprowadź swój numer telefonu poniżej.</span>",
+        "label": "Numer telefonu:",
+        "placeholder": "Numer telefonu",
+        "button": "Wypisz się",
+        "footer": "W dowolnym momencie możesz ponownie włączyć otrzymywanie wiadomości w zakładce Powiadomienia na Twoim koncie Lottoland."
+    },
+    "SE": {
+        "logo": "/lottoland.png",
+        "heading": "Avanmäl dig",
+        "message": "Är du säker på att du inte längre vill motta några textmeddelanden från oss?<br /><br />Tänk på att om du avregistrerar dig kan det hända att du missar spännande nyheter och vinstinformation.<br /><br /><span class=\"highlight\">Gå vidare genom att ange ditt mobilnummer i det lokala formatet nedan.</span>",
+        "label": "Nummer:",
+        "placeholder": "Nummer",
+        "button": "Avanmäl dig",
+        "footer": "Skulle du vilja återanmäla dig till våra utskick i framtiden, vänligen uppdatera då dina inställningar för notiser under Mitt konto."
+    },
+    "BR": {
+        "logo": "/lottoland.png",
+        "heading": "Cancelar Subscrição",
+        "message": "Você pode perder alertas informando sobre pagamentos, promoções e apostas grátis.<br /><br /><span class=\"highlight\">Se deseja continuar, por favor adicione seu número de celular no formato abaixo.</span>",
+        "label": "Número:",
+        "placeholder": "Número",
+        "button": "Cancelar",
+        "footer": "Se desejar ativar em qualquer outro momento, por favor atualize em sua Preferência de Contato na sua conta Lottoland."
+    },
+    "SK": {
+        "logo": "/lottoland.png",
+        "heading": "Odhlásenie",
+        "message": "Ste si istý, že sa chcete odhlásiť z odberu našich textových správ? Vymeškáte tak oznámenia o výplatách v hotovosti, akciách a stávkach zadarmo. Ak chcete aj tak pokračovať, zadajte prosím dole číslo Vášho mobilného telefónu v platnom formáte.",
+        "label": "Číslo:",
+        "placeholder": "Vaše číslo",
+        "button": "Odhlásenie",
+        "footer": "Zápätie: Ak sa chcete kedykoľvek znova prihlásiť, aktualizujte prosím Vaše predvoľby kontaktu vo Vašom Lottoland účte."
+    },
+    "HU": {
+        "logo": "/lottoland.png",
+        "heading": "Leiratkozás",
+        "message": "Biztos vagy benne, hogy szeretnél leiratkozni az általunk küldött e-mailekről?<br /><br />Lehetséges, hogy nem kapsz figyelmeztetéseket a kifizetésekről, az ajánlatainkról és az ingyenes játékokról.<br /><br />Ha mégis le szeretnél iratkozni, add meg mobiltelefonszámodat a helyes formátumban alább.",
+        "label": "Szám:",
+        "placeholder": "A te számod",
+        "button": "Leiratkozás",
+        "footer": "Ha bármikor fel szeretnél újra iratkozni, frissítsd kapcsolatfelvételi beállításaidat a Lottoland fiókodon belül."
+    },
+    "MX": {
+        "logo": "/lottoland.png",
+        "heading": "Cancelar Suscripción",
+        "message": "Recuerda que es posible que te pierdas las alertas y notificaciones sobre pagos, promociones y apuestas gratuitas.<br /><br /><span class=\"highlight\">Si deseas continuar, ingresa tu número de teléfono móvil a continuación.</span>",
+        "label": "Número:",
+        "placeholder": "Número",
+        "button": "Cancelar",
+        "footer": "Si deseas activar tu suscripción puedes hacerlo actualizando tus preferencias de contacto en tu cuenta de Lottoland."
+    },
+    "AU": {
+        "logo": "/kenogo.png",
+        "heading": "Opt Out",
+        "message": "Are you sure you would like to opt out from receiving text messages from us?<br /><br />You may miss alerts informing you of cash payouts, promotions and free tickets.<br /><br /><span class=\"highlight\">If you would like to go ahead, please enter your mobile number in the local format below.</span>",
+        "label": "Number:",
+        "placeholder": "Your number",
+        "button": "Opt Out",
+        "footer": "If you would like to re-subscribe at any time, please update your Contact Preferences in your KenoGO account"
+    }
+}
