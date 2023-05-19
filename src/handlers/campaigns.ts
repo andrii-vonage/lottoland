@@ -1,7 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import { deleteCampaigns, getCampaigns, GetTCampaignsParams } from "../models/campaigns";
 import { SORT_BY } from "../config";
-import { pauseCampaign } from "src/models/campaign";
+import { pauseCampaign } from "../models/campaign";
 
 export const getCampaignsHandler = async (req: NextApiRequest, res: NextApiResponse) => {
     try {
@@ -9,7 +9,7 @@ export const getCampaignsHandler = async (req: NextApiRequest, res: NextApiRespo
         const params: GetTCampaignsParams = {};
 
         if (id) {
-            params.id = parseInt(id as string);
+            params.id = id as string;
         }
 
         if (targetGroupName) {

@@ -1,10 +1,11 @@
-import { neru, State } from 'neru-alpha'
+import { neru, State } from "neru-alpha";
 
 const session = neru.getGlobalSession();
 
 export enum STATE_TABLE {
-    CAMPAIGNS = 'campaigns',
-    TEMPLATES = 'templates'
+    CAMPAIGNS = "campaigns",
+    TEMPLATES = "templates",
+    NUMBERS = "numbers",
 }
 
 // Create a separate state object for PRODUCTION and DEVELOPMENT

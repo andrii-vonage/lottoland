@@ -112,7 +112,7 @@ export const addCampaign = async (params: { EventTypeID: number; TimeStamp: stri
     });
 
     await state.hset(STATE_TABLE.CAMPAIGNS, { [campaign.id]: JSON.stringify(campaign) });
-};
+}
 
 export const getCampaignCustomers = async (
     campaignID: number,

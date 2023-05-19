@@ -7,7 +7,7 @@ export const deleteCampaigns = async () => {
 };
 
 export interface GetTCampaignsParams {
-    id?: number;
+    id?: string;
     targetGroupName?: string;
     offset?: number;
     limit?: number;
@@ -35,7 +35,7 @@ export const getCampaigns = async (params: GetTCampaignsParams) => {
     }
 
     if (id) {
-        filteredData = filteredData.filter((item) => item.id.toString().includes(id.toString()));
+        filteredData = filteredData.filter((item) => item.id.toString().startsWith(id));
     }
 
     // Sort data

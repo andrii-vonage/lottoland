@@ -105,6 +105,8 @@ export const onMessageEvent = async (message: any): Promise<void> => {
             value: 1,
         },
     ]);
+
+    console.log("UpdateCampaignMetrics:", result);
 };
 
 export const createOnMessageEventListenerIfNotExist = async () => {

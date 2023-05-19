@@ -4,6 +4,7 @@ import {
     getTemplate,
     getTemplates,
     GetTemplatesParams,
+    Template,
     updateTemplate,
 } from "../models/templates";
 import { addTemplateBodySchema, updateTemplateBodySchema } from "../schemas";
@@ -11,7 +12,7 @@ import { SORT_BY } from "../config";
 
 export const createTemplateHandler = async (req, res) => {
     try {
-        const body = req.body;
+        const body = req.body as Template;
         delete req.body.id;
 
         const { error } = addTemplateBodySchema.validate(req.body);
@@ -20,7 +21,9 @@ export const createTemplateHandler = async (req, res) => {
             return res.status(400).json({ error: error.details[0].message });
         }
 
-        await addTemplate(body);
+        const template = new Template(body.name, body.smsText, body.senderIdFieldName, body.optOutUrl);
+
+        await addTemplate(template);
 
         return res.status(201).json({ result: "OK" });
     } catch (err) {
