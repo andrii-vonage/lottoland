@@ -6,6 +6,7 @@ export enum STATE_TABLE {
     CAMPAIGNS = "campaigns",
     TEMPLATES = "templates",
     NUMBERS = "numbers",
+    QUEUES = "queues",
 }
 
 // Create a separate state object for PRODUCTION and DEVELOPMENT

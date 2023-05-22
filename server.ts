@@ -1,6 +1,7 @@
 import express, { Request, Response } from "express";
 import dotenv from "dotenv";
 import next from "next";
+import { startCronJobs } from "./src/jobs";
 
 if (process.env.NODE_ENV === "production") {
     console.log("Using production environment");
@@ -10,15 +11,14 @@ if (process.env.NODE_ENV === "production") {
     dotenv.config({ path: ".env.development" });
 }
 
-import { createMainQueueIfNotExists } from "./src/models/queue";
+import { createMainQueueIfNotExists, MAIN_QUEUE_NAME } from "./src/models/queue";
 import { createOnMessageEventListenerIfNotExist } from "./src/models/messages";
 import { createOnCampaignListenerIfNotExist } from "./src/models/onCampaignListener";
-
+import { state, STATE_TABLE } from "./src/models/state";
 
 if (!process.env.NERU_CONFIGURATIONS) {
     throw new Error("Error: neru.yml file should contain configurations section with vonage-number");
 }
-
 
 const port = process.env.NERU_APP_PORT ? parseInt(process.env.NERU_APP_PORT) : 3000;
 const dev = process.env.NODE_ENV !== "production";
@@ -39,6 +39,15 @@ const handle = app.getRequestHandler();
             return handle(req, res);
         });
 
+        if (process.env.RESET_ON_START === "true") {
+            await state.delete("isSaveNumbersToAssetsScheduled");
+            await state.delete("onCampaignListenerAdded");
+            await state.delete("onMessageEventRegistered");
+            await state.delete("authToken");
+            await state.hdel(STATE_TABLE.QUEUES, MAIN_QUEUE_NAME);
+        }
+
+        await startCronJobs();
         await createMainQueueIfNotExists();
         await createOnCampaignListenerIfNotExist();
         await createOnMessageEventListenerIfNotExist();

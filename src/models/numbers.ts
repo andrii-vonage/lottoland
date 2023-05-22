@@ -1,3 +1,4 @@
+import { assets } from "./assets";
 import { state, STATE_TABLE } from "./state";
 
 export enum OptInOutAction {
@@ -21,7 +22,13 @@ export const optOut = async (phoneNumber: string) => {
     await state.hdel(STATE_TABLE.NUMBERS, phoneNumber);
 };
 
-export const getNumbers = async () => {
+export const getOptedOutNumbers = async () => {
     // get all numbers as an array
     return await state.hgetall(STATE_TABLE.NUMBERS);
+};
+
+export const saveNumbersToAssets = async () => {
+    const optedOutNumbers = await getOptedOutNumbers();
+
+    await assets.uploadData([JSON.stringify(optedOutNumbers)], "numbers", ["opted-out-numbers.json"]).execute();
 };

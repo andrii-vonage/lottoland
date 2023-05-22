@@ -1,20 +1,15 @@
 project:
-  name: lottoland
+    name: lottoland
 instance:
-  name: dev
-  runtime: nodejs16
-  region: aws.euw1
-  application-id: 05f6b44e-0029-43d1-853b-89e398229a15
-  capabilities:
-    - messaging
-  configurations:
-    vonage-number: "447312263020"
-  entrypoint:
-    - npm
-    - start
+    name: dev
+    runtime: nodejs16
+    region: aws.euw1
+    application-id: 05f6b44e-0029-43d1-853b-89e398229a15
+    capabilities:
+        - messaging
+    configurations:
+        vonage-number: "447312263020"
+    entrypoint: ["ts-node", "--project", "tsconfig.server.json", "server.ts"]
 debug:
-  name: lottoland-debug
-  entrypoint:
-    - npm
-    - run
-    - dev
+    name: lottoland-debug
+    entrypoint: ["ts-node", "--project", "tsconfig.server.json", "server.ts"]

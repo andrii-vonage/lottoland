@@ -21,7 +21,7 @@ export const createTemplateHandler = async (req, res) => {
             return res.status(400).json({ error: error.details[0].message });
         }
 
-        const template = new Template(body.name, body.smsText, body.senderIdFieldName, body.optOutUrl);
+        const template = new Template(body.name, body.smsText, body.senderIdFieldName);
 
         await addTemplate(template);
 

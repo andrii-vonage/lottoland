@@ -3,9 +3,11 @@
     "version": "0.1.0",
     "private": true,
     "scripts": {
-        "dev": "NODE_OPTIONS='--inspect' NODE_ENV=development ts-node --project tsconfig.server.json server.ts",
-        "build": "next build && tsc --project ./tsconfig.server.json server.ts",
-        "start": "NODE_ENV=production node server.js",
+        "debug:sandbox": "NODE_OPTIONS='--inspect' NODE_ENV=development neru debug",
+        "debug:prod": "NODE_OPTIONS='--inspect' NODE_ENV=production neru debug",
+        "deploy:sandbox": "NODE_ENV=development neru deploy",
+        "deploy:prod": "NODE_ENV=production neru deploy",
+        "build": "next build",
         "lint": "next lint"
     },
     "dependencies": {

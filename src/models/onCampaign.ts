@@ -2,7 +2,7 @@ import { EVENT_TYPE } from "../config";
 import { getTemplate, getTemplateAttributes, Template } from "./templates";
 import { addCampaign, CampaignCustomer, getAllCustomersByCampaignId } from "./campaign";
 import { createSMSMessages } from "./messages";
-import { queue } from "./queue";
+import { createQueueIfNotExists, queue } from "./queue";
 
 export interface OnCampaignBody {
     CampaignID: number;
@@ -53,34 +53,11 @@ export const onCampaign = async (body: OnCampaignBody): Promise<void> => {
 
     const messages = createSMSMessages(campaignId, customersWithData, templates, templateAttributes);
 
-    let queueAlreadyExists = false;
-
-    try {
-        const details = await queue.getQueueDetails(queueName).execute();
-        if (details) {
-            queueAlreadyExists = true;
-        }
-    } catch (e) {
-        if (e.response.status === 404) {
-            queueAlreadyExists = false;
-        } else {
-            throw e;
-        }
-    }
-
-    if (!queueAlreadyExists) {
-        try {
-            await queue
-                .createQueue(queueName, `api/webhooks/queues/${queueName}`, {
-                    maxInflight: 5,
-                    msgPerSecond: 30,
-                    active: true,
-                })
-                .execute();
-        } catch (e) {
-            throw new Error("Couldn't create queue");
-        }
-    }
+    await createQueueIfNotExists(queueName, `api/webhooks/queues/${queueName}`, {
+        maxInflight: 5,
+        msgPerSecond: 30,
+        active: true,
+    });
 
     await queue.enqueue(queueName, messages).execute();
 };
