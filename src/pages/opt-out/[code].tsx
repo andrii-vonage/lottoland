@@ -54,7 +54,7 @@ const Form = ({ code }: { code: string }) => {
 
         try {
             setBusy(true);
-            await fetcher("api/numbers/opt-out", {
+            await fetcher("/api/numbers/opt-out", {
                 body: JSON.stringify({ action, phoneNumber, phoneCountryCode }),
                 headers: { "Content-Type": "application/json" },
                 method: "POST",
