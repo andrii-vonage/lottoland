@@ -54,8 +54,6 @@ export const onQueueMessageBodySchema = Joi.object({
     text: Joi.string().required(),
 });
 
-export const onMessageReceiptSaveEventBodySchema = Joi.object({});
-
 export const optInOutBodySchema = Joi.object({
     action: Joi.string().valid("opt-out", "opt-in").required(),
     phoneNumber: Joi.string().required(),

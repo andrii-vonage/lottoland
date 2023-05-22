@@ -1,6 +1,7 @@
 import { neru, Queue, QueueDetailsResponse } from "neru-alpha";
+import { ICreateQueueOptions } from "neru-alpha/dist/cjs/providers/queue/contracts/ICreateQueueOptions";
 import { Message } from "./messages";
-import { state } from "./state";
+import { state, STATE_TABLE } from "./state";
 
 const MAIN_QUEUE_NAME = "MAIN_QUEUE";
 
@@ -79,28 +80,38 @@ export const onQueueMessage = async (queueName, message: Message) => {
     mainQueueDetailsResponse.stats.totalEnqueue += 1;
 };
 
-export const createMainQueueIfNotExists = async () => {
-    const key = "isMainQueueCreated";
-    const isMainQueueCreated = await state.get(key);
+export const createQueueIfNotExists = async (queueName: string, callback: string, options: ICreateQueueOptions) => {
+        const isQueueCreated = await state.hget(STATE_TABLE.QUEUES, queueName);
 
-    if (!isMainQueueCreated) {
+    if (!isQueueCreated) {
         try {
-            await queue
-                .createQueue(MAIN_QUEUE_NAME, "api/webhooks/onMessage", {
-                    maxInflight: 5,
-                    msgPerSecond: 30,
-                    active: true,
-                })
-                .execute();
+            await queue.createQueue(queueName, callback, options).execute();
+
+            console.log(`CreateQueueIfNotExists: ${queueName} created`);
+
+            await state.hset(STATE_TABLE.QUEUES, {
+                [queueName]: "true",
+            });
         } catch (err) {
             if (err.response.status === 409) {
-                console.log("CreateMainQueue: already exists, skip");
-                await state.set(key, true);
+                console.log(`CreateQueueIfNotExists: ${queueName} already exists, skip`);
+
+                await state.hset(STATE_TABLE.QUEUES, {
+                    [queueName]: "true",
+                });
             } else {
-                throw err;
+                throw new Error(`CreateQueueIfNotExists: ${queueName} failed to create: ${err.message}`);
             }
         }
     } else {
-        console.log("Main queue already exists");
+        console.log(`CreateQueueIfNotExists: ${queueName} already exists, skip`);
     }
+};
+
+export const createMainQueueIfNotExists = async () => {
+    await createQueueIfNotExists(MAIN_QUEUE_NAME, "api/webhooks/onMessage", {
+        maxInflight: 5,
+        msgPerSecond: 30,
+        active: true,
+    });
 };

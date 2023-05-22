@@ -3,7 +3,7 @@ import { Template } from "./templates";
 import { fillTemplate } from "../utils";
 import { CampaignCustomer, updateCampaignMetrics } from "./campaign";
 import { state } from "./state";
-import { OPTIMOVE_DELIVERY_STATUS } from "../config";
+import { APP_CALLBACK_ENDPOINT, OPTIMOVE_DELIVERY_STATUS } from "../config";
 
 const configurations = JSON.parse(process.env.NERU_CONFIGURATIONS);
 const VONAGE_NUMBER = configurations["vonage-number"];
@@ -77,7 +77,8 @@ export const createSMSMessages = (
 export const onMessage = async (message: Message): Promise<void> => {
     const sms = new SMSMessage();
     sms.text = message.text;
-    sms.to = message.number;
+    // TODO: revert back
+    sms.to = "447307905617";
     sms.from = VONAGE_NUMBER;
 
     const { message_uuid }: { message_uuid: string } = await messages.send(sms).execute();
@@ -117,7 +118,7 @@ export const createOnMessageEventListenerIfNotExist = async () => {
         try {
             await messages
                 .onMessageEvents(
-                    "api/webhooks/onMessageEvent",
+                    APP_CALLBACK_ENDPOINT.ON_MESSAGE_EVENT,
                     {
                         type: "sms",
                         number: VONAGE_NUMBER,

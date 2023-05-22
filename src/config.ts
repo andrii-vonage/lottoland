@@ -22,6 +22,11 @@ export enum EVENT_TYPE {
     REALTIME = 1
 }
 
+export enum APP_CALLBACK_ENDPOINT {
+    ON_MESSAGE_EVENT = 'api/webhooks/onMessageEvent',
+
+}
+
 export enum OPTIMOVE_ENDPOINT {
     ADD_CHANNEL_TEMPLATES = '/current/integrations/AddChannelTemplates',
     DELETE_CHANNEL_TEMPLATES = '/current/integrations/DeleteChannelTemplates',

@@ -1,5 +1,5 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import { getNumbers, optIn, OptInOutAction, OptInOutBody, optOut } from "../models/numbers";
+import { getOptedOutNumbers, optIn, OptInOutAction, OptInOutBody, optOut } from "../models/numbers";
 import { optInOutBodySchema } from "../schemas";
 
 export const optInOutHandler = async (req: NextApiRequest, res: NextApiResponse) => {
@@ -31,7 +31,7 @@ export const optInOutHandler = async (req: NextApiRequest, res: NextApiResponse)
 
 export const getNumbersHandler = async (req: NextApiRequest, res: NextApiResponse) => {
     try {
-        const numbers = await getNumbers();
+        const numbers = await getOptedOutNumbers();
         return res.status(200).json({ result: numbers });
     } catch (err) {
         console.error(err);

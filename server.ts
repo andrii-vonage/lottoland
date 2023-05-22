@@ -1,6 +1,7 @@
 import express, { Request, Response } from "express";
 import dotenv from "dotenv";
 import next from "next";
+import { startCronJobs } from "./src/jobs";
 
 if (process.env.NODE_ENV === "production") {
     console.log("Using production environment");
@@ -14,11 +15,9 @@ import { createMainQueueIfNotExists } from "./src/models/queue";
 import { createOnMessageEventListenerIfNotExist } from "./src/models/messages";
 import { createOnCampaignListenerIfNotExist } from "./src/models/onCampaignListener";
 
-
 if (!process.env.NERU_CONFIGURATIONS) {
     throw new Error("Error: neru.yml file should contain configurations section with vonage-number");
 }
-
 
 const port = process.env.NERU_APP_PORT ? parseInt(process.env.NERU_APP_PORT) : 3000;
 const dev = process.env.NODE_ENV !== "production";
@@ -39,6 +38,7 @@ const handle = app.getRequestHandler();
             return handle(req, res);
         });
 
+        await startCronJobs();
         await createMainQueueIfNotExists();
         await createOnCampaignListenerIfNotExist();
         await createOnMessageEventListenerIfNotExist();

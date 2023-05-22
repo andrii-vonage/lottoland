@@ -6,7 +6,7 @@ import { state } from "./state";
 
 const APP_URL = neru.getAppUrl();
 
-class OnCampaignListenerPayload {
+export class OnCampaignListenerPayload {
     EventTypeID: EVENT_TYPE;
     ChannelID: CAMPAIGN_CHANNEL.SMS;
     ListenerURL: string;
