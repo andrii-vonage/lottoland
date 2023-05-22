@@ -2,7 +2,7 @@ import { neru, Messages, SMSMessage } from "neru-alpha";
 import { Template } from "./templates";
 import { fillTemplate } from "../utils";
 import { CampaignCustomer, updateCampaignMetrics } from "./campaign";
-import { state } from "./state";
+import { state, STATE_TABLE } from "./state";
 import { APP_CALLBACK_ENDPOINT, OPTIMOVE_DELIVERY_STATUS } from "../config";
 
 const configurations = JSON.parse(process.env.NERU_CONFIGURATIONS);
@@ -75,10 +75,16 @@ export const createSMSMessages = (
 };
 
 export const onMessage = async (message: Message): Promise<void> => {
+    const isOptedOut = await state.hget(STATE_TABLE.NUMBERS, "+" + message.number);
+
+    if (isOptedOut) {
+        console.log(`Number ${message.number} is opted out, skip`);
+        return;
+    }
+
     const sms = new SMSMessage();
     sms.text = message.text;
-    // TODO: revert back
-    sms.to = "447307905617";
+    sms.to = message.number;
     sms.from = VONAGE_NUMBER;
 
     const { message_uuid }: { message_uuid: string } = await messages.send(sms).execute();

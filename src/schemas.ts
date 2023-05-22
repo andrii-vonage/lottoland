@@ -11,7 +11,6 @@ export const addTemplateBodySchema = Joi.object({
             "string.pattern.base": "should contain only letters and numbers",
             "string.max": "senderIdFieldName should be no more than 11 characters",
         }),
-    optOutUrl: Joi.string().required(),
 });
 
 export const updateTemplateBodySchema = Joi.object({
@@ -26,7 +25,6 @@ export const updateTemplateBodySchema = Joi.object({
             "string.pattern.base": "should contain only letters and numbers",
             "string.max": "senderIdFieldName should be no more than 11 characters",
         }),
-    optOutUrl: Joi.string().required(),
 });
 
 export const updateQueueBodySchema = Joi.object({

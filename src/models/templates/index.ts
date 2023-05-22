@@ -16,14 +16,11 @@ export class Template {
     name: string;
     smsText: string;
     senderIdFieldName: string;
-    optOutUrl: string;
-
-    constructor(name: string, smsText: string, senderIdFieldName: string, optOutUrl: string) {
+    constructor(name: string, smsText: string, senderIdFieldName: string) {
         this.id = generateUniqueId();
         this.name = name;
         this.smsText = smsText;
         this.senderIdFieldName = senderIdFieldName;
-        this.optOutUrl = optOutUrl;
     }
 }
 

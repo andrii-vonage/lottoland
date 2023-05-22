@@ -3,7 +3,7 @@ import { ICreateQueueOptions } from "neru-alpha/dist/cjs/providers/queue/contrac
 import { Message } from "./messages";
 import { state, STATE_TABLE } from "./state";
 
-const MAIN_QUEUE_NAME = "MAIN_QUEUE";
+export const MAIN_QUEUE_NAME = "MAIN_QUEUE";
 
 const session = neru.getGlobalSession();
 export const queue = new Queue(session);
