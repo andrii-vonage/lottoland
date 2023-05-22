@@ -31,7 +31,12 @@ export const TemplateForm = ({ busy = false, onCancel, onSave, template }: Templ
     const warnSmsTextLength = counterStats?.charLimit || 160;
     const maxSmsTextLength = warnSmsTextLength * 2;
 
-    const { register, handleSubmit, reset } = useForm({
+    const {
+        register,
+        handleSubmit,
+        reset,
+        setValue: setFormValue,
+    } = useForm({
         defaultValues: template,
     });
 
@@ -42,6 +47,20 @@ export const TemplateForm = ({ busy = false, onCancel, onSave, template }: Templ
     useEffect(() => {
         setCounterStats(getCounterStats(value));
     }, [value]);
+
+    const addOptOutUrl = (e) => {
+        let template = value;
+        const pattern = /https:\/\/bit\.ly\/[\S]+/g;
+
+        if (value.match(pattern)) {
+            template = value.replace(pattern, e.target.value);
+        } else {
+            template = `${value}\n\nOpt-out: ${e.target.value}`;
+        }
+
+        setFormValue("smsText", template);
+        setCounterStats(getCounterStats(template));
+    };
 
     const messageNum = Math.ceil(characterCount / warnSmsTextLength) || 1;
     const totalMessages = maxSmsTextLength / warnSmsTextLength;
@@ -108,7 +127,7 @@ export const TemplateForm = ({ busy = false, onCancel, onSave, template }: Templ
                         <FormControl isRequired>
                             <Flex whiteSpace="nowrap" alignItems="center">
                                 <FormLabel>Opt-out template</FormLabel>
-                                <Select placeholder="Select language" {...register("optOutUrl")}>
+                                <Select placeholder="Select language" onChange={addOptOutUrl}>
                                     {[
                                         ["GB", "English", process.env.NEXT_PUBLIC_BITLY_GB],
                                         ["DE", "German", process.env.NEXT_PUBLIC_BITLY_DE],

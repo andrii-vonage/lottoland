@@ -1,6 +1,6 @@
 import { Alert, AlertIcon, Button, Flex, Heading, Spinner } from "@chakra-ui/react";
 import Head from "next/head";
-import { useCallback, useState } from "react";
+import { useState } from "react";
 import { ConfirmDialog } from "src/components/ConfirmDialog";
 import { Navigation } from "src/components/Navigation";
 import { TemplateForm } from "src/components/TemplateForm";
@@ -17,7 +17,6 @@ export interface Template {
     id: number;
     name: string;
     smsText: string;
-    optOutUrl: string;
     senderIdFieldName: string;
 }
 
@@ -92,9 +91,8 @@ export default withPageAuthRequired(function Templates() {
         const name = template.name.trim();
         const senderIdFieldName = template.senderIdFieldName.trim();
         const smsText = template.smsText.trim();
-        const optOutUrl = template.optOutUrl;
 
-        if (name && senderIdFieldName && smsText && optOutUrl) {
+        if (name && senderIdFieldName && smsText) {
             const { charCount, charLimit } = getCounterStats(smsText);
             const maxSmsTextLength = charLimit * 2;
             if (charCount > maxSmsTextLength) {
@@ -105,7 +103,7 @@ export default withPageAuthRequired(function Templates() {
             try {
                 setBusy(true);
                 await fetcher(id ? `/api/templates/${id}` : "/api/templates", {
-                    body: JSON.stringify({ id, name, senderIdFieldName, smsText, optOutUrl }),
+                    body: JSON.stringify({ id, name, senderIdFieldName, smsText }),
                     headers: { "Content-Type": "application/json" },
                     method: id ? "PUT" : "POST",
                 });
