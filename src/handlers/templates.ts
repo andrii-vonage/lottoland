@@ -1,12 +1,12 @@
 import { withApiAuthRequired } from "@auth0/nextjs-auth0";
 import {
     addTemplate,
-    deleteTemplate,
+    deleteTemplate, generateUniqueId,
     getTemplate,
     getTemplates,
     GetTemplatesParams,
     Template,
-    updateTemplate,
+    updateTemplate
 } from "../models/templates";
 import { addTemplateBodySchema, updateTemplateBodySchema } from "../schemas";
 import { SORT_BY } from "../config";
@@ -22,7 +22,11 @@ export const createTemplateHandler = withApiAuthRequired(async (req, res) => {
             return res.status(400).json({ error: error.details[0].message });
         }
 
-        const template = new Template(body.name, body.smsText, body.senderIdFieldName);
+        const template = new Template();
+        template.name = body.name;
+        template.smsText = body.smsText;
+        template.senderIdFieldName = body.senderIdFieldName;
+        template.id = await generateUniqueId();
 
         await addTemplate(template);
 
