@@ -38,7 +38,7 @@ export const createOnCampaignListenerIfNotExist = async () => {
             await state.set(key, true);
         } catch (err) {
             console.error(`CreateOnCampaignListener:`, err);
-            throw new Error("CreateOnCampaignListener:", err);
+            throw new Error("CreateOnCampaignListener:" + err.message);
         }
     } else {
         console.log("CreateOnCampaignListener: already created a listener, skip");

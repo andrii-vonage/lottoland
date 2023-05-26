@@ -24,12 +24,6 @@ export const onCampaign = async (body: OnCampaignBody): Promise<void> => {
     let customersWithData: CampaignCustomer[];
 
     try {
-        await addCampaign(campaign);
-    } catch (err) {
-        throw new Error("Couldn't add campaign to the database:" + err.message);
-    }
-
-    try {
         customers = await getAllCustomersByCampaignId(campaignId);
     } catch (e) {
         throw new Error("Couldn't get customers from the database");
@@ -39,9 +33,13 @@ export const onCampaign = async (body: OnCampaignBody): Promise<void> => {
 
     try {
         templates = await Promise.all(templateIds.map((id) => getTemplate(id.toString())));
+
+        templates = templates.filter((template) => template !== null) as Template[];
     } catch (e) {
         throw new Error("Couldn't get templates from the database");
     }
+
+    if (!templates.length) throw new Error("No templates found for this campaign");
 
     const templateAttributes = getTemplateAttributes(templates);
 
@@ -59,5 +57,13 @@ export const onCampaign = async (body: OnCampaignBody): Promise<void> => {
         active: true,
     });
 
+    try {
+        await addCampaign(campaign);
+    } catch (err) {
+        throw new Error("Couldn't add campaign to the database:" + err.message);
+    }
+
     await queue.enqueue(queueName, messages).execute();
+
+    console.log("Messages enqueued:", messages.length);
 };

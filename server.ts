@@ -1,7 +1,6 @@
 import express, { Request, Response } from "express";
 import dotenv from "dotenv";
 import next from "next";
-import { startCronJobs } from "./src/jobs";
 
 if (process.env.NODE_ENV === "production") {
     console.log("Using production environment");
@@ -11,6 +10,7 @@ if (process.env.NODE_ENV === "production") {
     dotenv.config({ path: ".env.development" });
 }
 
+import { startCronJobs } from "./src/jobs";
 import { createMainQueueIfNotExists, MAIN_QUEUE_NAME } from "./src/models/queue";
 import { createOnMessageEventListenerIfNotExist } from "./src/models/messages";
 import { createOnCampaignListenerIfNotExist } from "./src/models/onCampaignListener";

@@ -1,9 +1,10 @@
+import { withApiAuthRequired } from "@auth0/nextjs-auth0";
 import type { NextApiRequest, NextApiResponse } from "next";
 import { deleteCampaigns, getCampaigns, GetTCampaignsParams } from "../models/campaigns";
 import { SORT_BY } from "../config";
 import { pauseCampaign } from "../models/campaign";
 
-export const getCampaignsHandler = async (req: NextApiRequest, res: NextApiResponse) => {
+export const getCampaignsHandler = withApiAuthRequired(async (req: NextApiRequest, res: NextApiResponse) => {
     try {
         const { id, targetGroupName, offset, limit, sortBy, sortDir } = req.query;
         const params: GetTCampaignsParams = {};
@@ -38,8 +39,9 @@ export const getCampaignsHandler = async (req: NextApiRequest, res: NextApiRespo
         console.error("GetCampaigns", err);
         return res.status(500).json({ error: err.message });
     }
-};
+});
 
+// TODO: Remove this handler
 export const deleteCampaignsHandler = async (req: NextApiRequest, res: NextApiResponse) => {
     try {
         await deleteCampaigns();
@@ -48,9 +50,9 @@ export const deleteCampaignsHandler = async (req: NextApiRequest, res: NextApiRe
         console.error("DeleteCampaigns:", err);
         return res.status(500).json({ error: err.message });
     }
-};
+}
 
-export const pauseCampaignByIdHandler = async (req: NextApiRequest, res: NextApiResponse) => {
+export const pauseCampaignByIdHandler = withApiAuthRequired(async (req: NextApiRequest, res: NextApiResponse) => {
     try {
         const campaignId = req.query.campaignId as string;
         console.log("PauseCampaignByIdHandler:", campaignId);
@@ -62,4 +64,4 @@ export const pauseCampaignByIdHandler = async (req: NextApiRequest, res: NextApi
         console.error("PauseCampaignByIdHandler:", err);
         return res.status(500).json({ error: err.message });
     }
-};
+});

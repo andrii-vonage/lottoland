@@ -1,5 +1,5 @@
 import { STATE_TABLE, state } from "../state";
-import { Template } from "./index";
+import { Template } from "./";
 
 export const localGetTemplates = async () => {
     const templates = await state.hvals(STATE_TABLE.TEMPLATES);

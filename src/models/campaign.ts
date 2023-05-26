@@ -1,4 +1,3 @@
-import { addDaysToTimestamp, timestampToYMD } from "../utils";
 import { getCampaignDetails } from "./campaignDetails";
 import { state, STATE_TABLE } from "./state";
 import { API_BASE_URL, CAMPAIGN_CHANNEL, OPTIMOVE_DELIVERY_STATUS, OPTIMOVE_ENDPOINT, REQUEST_VERB } from "../config";
@@ -41,19 +40,23 @@ export interface CampaignCustomer {
     CustomerAttributes: string[];
 }
 
-const getActionName = async (
-    id: number
-): Promise<{
+interface GetActionNameResponse {
     ActionName: string;
-}> => {
+}
+
+const getActionName = async (id: number): Promise<GetActionNameResponse> => {
     const urlObject = new URL(OPTIMOVE_ENDPOINT.GET_ACTION_NAME, API_BASE_URL);
     urlObject.searchParams.append("ActionID", id.toString());
 
     const url = urlObject.href;
     const r = await apiClient(url, { method: REQUEST_VERB.GET });
 
-    return await r.json();
+    return (await r.json()) as GetActionNameResponse;
 };
+
+interface GetTargetGroupNameResponse {
+    TargetGroupName: string;
+}
 
 const getTargetGroupName = async (id: number): Promise<string> => {
     const urlObject = new URL(OPTIMOVE_ENDPOINT.GET_TARGET_GROUP_NAME, API_BASE_URL);
@@ -62,22 +65,20 @@ const getTargetGroupName = async (id: number): Promise<string> => {
     const url = urlObject.href;
     const r = await apiClient(url, { method: REQUEST_VERB.GET });
 
-    const response: {
-        TargetGroupName: string;
-    } = await r.json();
+    const response = (await r.json()) as GetTargetGroupNameResponse;
 
     return response.TargetGroupName;
 };
 
+interface GetActionsByTargetGroupResponseItem {
+    RecipientGroupID: number;
+    ActionID: number;
+}
+
 const getActionsByTargetGroup = async (
     targetGroupId: number,
     date: string
-): Promise<
-    {
-        RecipientGroupID: number;
-        ActionID: number;
-    }[]
-> => {
+): Promise<GetActionsByTargetGroupResponseItem[]> => {
     const urlObject = new URL(OPTIMOVE_ENDPOINT.GET_ACTIONS_BY_TARGET_GROUP, API_BASE_URL);
     urlObject.searchParams.append("TargetGroupID", targetGroupId.toString());
     urlObject.searchParams.append("Date", date);
@@ -85,8 +86,31 @@ const getActionsByTargetGroup = async (
     const url = urlObject.href;
     const r = await apiClient(url, { method: REQUEST_VERB.GET });
 
-    return await r.json();
+    return (await r.json()) as GetActionsByTargetGroupResponseItem[];
 };
+
+function timestampToYMD(timestamp: string): string {
+    const date = new Date(timestamp);
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0"); // Months are 0-based in JavaScript
+    const day = String(date.getDate()).padStart(2, "0");
+
+    return `${year}-${month}-${day}`;
+}
+
+function addDaysToTimestamp(timestamp: string, days: number) {
+    let date = new Date(timestamp);
+    date.setDate(date.getDate() + days);
+
+    let year = date.getFullYear();
+    let month = String(date.getMonth() + 1).padStart(2, "0"); // JavaScript months are 0-based
+    let day = String(date.getDate()).padStart(2, "0");
+    let hours = String(date.getHours()).padStart(2, "0");
+    let minutes = String(date.getMinutes()).padStart(2, "0");
+    let seconds = String(date.getSeconds()).padStart(2, "0");
+
+    return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+}
 
 export const addCampaign = async (params: { EventTypeID: number; TimeStamp: string; CampaignID: number }) => {
     const campaignStartDate = timestampToYMD(params.TimeStamp);
@@ -102,7 +126,6 @@ export const addCampaign = async (params: { EventTypeID: number; TimeStamp: stri
     const actionNames = [`TestAction:${campaignDetails.TargetGroupID.toString()}`];
     const campaignEndDate = timestampToYMD(addDaysToTimestamp(params.TimeStamp, campaignDetails.Duration));
 
-
     const campaign = new Campaign({
         id: params.CampaignID,
         targetGroupName,
@@ -112,7 +135,7 @@ export const addCampaign = async (params: { EventTypeID: number; TimeStamp: stri
     });
 
     await state.hset(STATE_TABLE.CAMPAIGNS, { [campaign.id]: JSON.stringify(campaign) });
-}
+};
 
 export const getCampaignCustomers = async (
     campaignID: number,
@@ -149,13 +172,13 @@ export const getAllCustomersByCampaignId = async (
     let skip = 0;
     let customers: CampaignCustomer[] = [];
     let r = await getCampaignCustomers(campaignID, pageSize, skip, attributes);
-    let result: CampaignCustomer[] = await r.json();
+    let result = (await r.json()) as CampaignCustomer[];
 
     while (result.length > 0) {
         customers = customers.concat(result);
         skip += pageSize;
         r = await getCampaignCustomers(campaignID, pageSize, skip, attributes);
-        result = await r.json();
+        result = (await r.json()) as CampaignCustomer[];
     }
 
     return customers;
@@ -206,7 +229,7 @@ export const updateCampaignMetrics = async (
 export const pauseCampaign = async (id: string) => {
     await queue.pauseQueue(id).execute();
     await updateCampaignStatus(id, CAMPAIGN_STATUS.PAUSED);
-}
+};
 
 const updateCampaignStatus = async (id: string, status: CAMPAIGN_STATUS) => {
     const campaign = await state.hget(STATE_TABLE.CAMPAIGNS, id);
@@ -219,6 +242,4 @@ const updateCampaignStatus = async (id: string, status: CAMPAIGN_STATUS) => {
     c.status = status;
 
     await state.hset(STATE_TABLE.CAMPAIGNS, { [c.id]: JSON.stringify(c) });
-}
-
-
+};

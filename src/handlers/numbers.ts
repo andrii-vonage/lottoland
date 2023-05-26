@@ -1,8 +1,9 @@
+import { withApiAuthRequired } from "@auth0/nextjs-auth0";
 import { NextApiRequest, NextApiResponse } from "next";
 import { getOptedOutNumbers, optIn, OptInOutAction, OptInOutBody, optOut } from "../models/numbers";
 import { optInOutBodySchema } from "../schemas";
 
-export const optInOutHandler = async (req: NextApiRequest, res: NextApiResponse) => {
+export const optInOutHandler = withApiAuthRequired(async (req: NextApiRequest, res: NextApiResponse) => {
     try {
         const { error } = optInOutBodySchema.validate(req.body);
 
@@ -27,9 +28,9 @@ export const optInOutHandler = async (req: NextApiRequest, res: NextApiResponse)
         console.error(err);
         return res.status(500).json({ error: err.message });
     }
-};
+});
 
-export const getNumbersHandler = async (req: NextApiRequest, res: NextApiResponse) => {
+export const getNumbersHandler = withApiAuthRequired(async (req: NextApiRequest, res: NextApiResponse) => {
     try {
         const numbers = await getOptedOutNumbers();
         return res.status(200).json({ result: numbers });
@@ -37,4 +38,4 @@ export const getNumbersHandler = async (req: NextApiRequest, res: NextApiRespons
         console.error(err);
         return res.status(500).json({ error: err.message });
     }
-};
+});

@@ -5,9 +5,8 @@
     "scripts": {
         "debug:sandbox": "NODE_OPTIONS='--inspect' NODE_ENV=development neru debug",
         "debug:prod": "NODE_OPTIONS='--inspect' NODE_ENV=production neru debug",
-        "deploy:sandbox": "NODE_ENV=development neru deploy",
-        "deploy:prod": "NODE_ENV=production neru deploy",
-        "build": "next build",
+        "deploy:prod": "neru deploy",
+        "build": "next build && tsc --project tsconfig.server.json",
         "lint": "next lint"
     },
     "dependencies": {
@@ -18,6 +17,7 @@
         "@emotion/styled": "^11.10.6",
         "@sms77.io/counter": "^1.5.0",
         "@types/node": "18.15.11",
+        "@types/node-fetch": "^2.6.4",
         "@types/react": "18.0.31",
         "@types/react-dom": "18.0.11",
         "@types/react-table": "^7.7.14",
@@ -30,6 +30,7 @@
         "joi": "^17.9.2",
         "neru-alpha": "^4.1.0-rc5",
         "next": "13.2.4",
+        "node-fetch": "^2.6.11",
         "prettier": "^2.8.8",
         "react": "18.2.0",
         "react-dom": "18.2.0",

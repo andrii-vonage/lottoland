@@ -21,5 +21,5 @@ export const getCampaignDetails = async (id: number): Promise<CampaignDetails> =
     const url = urlObject.href;
     const r = await apiClient(url, { method: REQUEST_VERB.GET });
 
-    return await r.json();
+    return (await r.json()) as CampaignDetails;
 };

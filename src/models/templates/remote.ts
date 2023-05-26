@@ -1,6 +1,6 @@
 import { CAMPAIGN_CHANNEL, OPTIMOVE_ENDPOINT, REQUEST_VERB, API_BASE_URL } from "../../config";
 import { apiClient } from "../../apiClient";
-import { Template } from "./index";
+import { Template } from "./";
 
 export const remoteAddTemplate = async (template: Template) => {
     const urlObj = new URL(OPTIMOVE_ENDPOINT.ADD_CHANNEL_TEMPLATES, API_BASE_URL);

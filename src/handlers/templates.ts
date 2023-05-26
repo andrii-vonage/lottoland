@@ -1,3 +1,4 @@
+import { withApiAuthRequired } from "@auth0/nextjs-auth0";
 import {
     addTemplate,
     deleteTemplate,
@@ -10,7 +11,7 @@ import {
 import { addTemplateBodySchema, updateTemplateBodySchema } from "../schemas";
 import { SORT_BY } from "../config";
 
-export const createTemplateHandler = async (req, res) => {
+export const createTemplateHandler = withApiAuthRequired(async (req, res) => {
     try {
         const body = req.body as Template;
         delete req.body.id;
@@ -30,9 +31,9 @@ export const createTemplateHandler = async (req, res) => {
         console.error("AddTemplateHandler:", err);
         return res.status(500).json({ error: err.message });
     }
-};
+});
 
-export const getTemplateHandler = async (req, res) => {
+export const getTemplateHandler = withApiAuthRequired(async (req, res) => {
     try {
         const templateId = req.query.templateId as string;
         const template = await getTemplate(templateId);
@@ -46,9 +47,9 @@ export const getTemplateHandler = async (req, res) => {
         console.error("GetTemplateHandler:", err);
         return res.status(500).json({ error: err.message });
     }
-};
+});
 
-export const updateTemplateHandler = async (req, res) => {
+export const updateTemplateHandler = withApiAuthRequired(async (req, res) => {
     try {
         const { error } = updateTemplateBodySchema.validate(req.body);
 
@@ -63,9 +64,9 @@ export const updateTemplateHandler = async (req, res) => {
         console.error("UpdateTemplateHandler:", err);
         return res.status(500).json({ error: err.message });
     }
-};
+});
 
-export const deleteTemplateHandler = async (req, res) => {
+export const deleteTemplateHandler = withApiAuthRequired(async (req, res) => {
     try {
         const templateId = req.query.templateId as string;
         await deleteTemplate(templateId);
@@ -74,9 +75,9 @@ export const deleteTemplateHandler = async (req, res) => {
         console.error("DeleteTemplateHandler:", err);
         return res.status(500).json({ error: err.message });
     }
-};
+});
 
-export const getTemplatesHandler = async (req, res) => {
+export const getTemplatesHandler = withApiAuthRequired(async (req, res) => {
     try {
         const { name, offset, limit, sortBy, sortDir } = req.query;
         const params: GetTemplatesParams = {};
@@ -107,4 +108,4 @@ export const getTemplatesHandler = async (req, res) => {
         console.error("GetTemplatesHandler:", err);
         return res.status(500).json({ error: err.message });
     }
-};
+});

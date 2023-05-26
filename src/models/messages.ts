@@ -1,6 +1,5 @@
 import { neru, Messages, SMSMessage } from "neru-alpha";
 import { Template } from "./templates";
-import { fillTemplate } from "../utils";
 import { CampaignCustomer, updateCampaignMetrics } from "./campaign";
 import { state, STATE_TABLE } from "./state";
 import { APP_CALLBACK_ENDPOINT, OPTIMOVE_DELIVERY_STATUS } from "../config";
@@ -45,6 +44,12 @@ export enum SMS_DELIVERY_STATUS {
     FAILED = "failed",
     REJECTED = "rejected",
     UNKNOWN = "unknown",
+}
+
+function fillTemplate(template: string, dictionary: Record<string, string>) {
+    return template.replace(/{{\s*(.*?)\s*}}/g, function (_, key) {
+        return dictionary[key.trim()] || "";
+    });
 }
 
 export const createSMSMessages = (
@@ -136,7 +141,7 @@ export const createOnMessageEventListenerIfNotExist = async () => {
                 )
                 .execute();
         } catch (err) {
-            throw new Error("CreateOnMessageEventListener:", err);
+            throw new Error("CreateOnMessageEventListener:" + err.message);
         }
     } else {
         console.log("CreateOnMessageEventListener: already created a listener, skip");
