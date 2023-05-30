@@ -3,9 +3,10 @@
     "version": "0.1.0",
     "private": true,
     "scripts": {
-        "debug:sandbox": "NODE_OPTIONS='--inspect' NODE_ENV=development neru debug",
-        "debug:prod": "NODE_OPTIONS='--inspect' NODE_ENV=production neru debug",
-        "deploy:prod": "neru deploy",
+        "debug:sandbox": "NODE_OPTIONS='--inspect' OPTIMOVE_ENV=sandbox neru debug",
+        "debug:prod": "NODE_OPTIONS='--inspect' OPTIMOVE_ENV=production neru debug",
+        "deploy:sandbox": "OPTIMOVE_ENV=sandbox neru deploy",
+        "deploy:prod": "OPTIMOVE_ENV=production neru deploy",
         "build": "next build && tsc --project tsconfig.server.json",
         "lint": "next lint"
     },

@@ -2,11 +2,11 @@ import express, { Request, Response } from "express";
 import dotenv from "dotenv";
 import next from "next";
 
-if (process.env.NODE_ENV === "production") {
+if (process.env.OPTIMOVE_ENV === "production") {
     console.log("Using production environment");
     dotenv.config({ path: ".env.production" });
 } else {
-    console.log("Using development environment");
+    console.log("Using sandbox environment");
     dotenv.config({ path: ".env.development" });
 }
 
