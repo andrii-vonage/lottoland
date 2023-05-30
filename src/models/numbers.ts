@@ -13,13 +13,13 @@ export interface OptInOutBody {
 }
 
 export const optIn = async (phoneNumber: string) => {
-    await state.hset(STATE_TABLE.NUMBERS, {
-        [phoneNumber]: "{}",
-    });
+    await state.hdel(STATE_TABLE.NUMBERS, phoneNumber);
 };
 
 export const optOut = async (phoneNumber: string) => {
-    await state.hdel(STATE_TABLE.NUMBERS, phoneNumber);
+    await state.hset(STATE_TABLE.NUMBERS, {
+        [phoneNumber]: "{}",
+    });
 };
 
 export const getOptedOutNumbers = async () => {
