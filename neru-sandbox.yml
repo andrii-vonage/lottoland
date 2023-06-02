@@ -1,0 +1,19 @@
+project:
+    name: lottoland-sandbox
+instance:
+    name: dev
+    runtime: nodejs16
+    region: aws.euw1
+    application-id: cf18f306-8ff6-488d-8546-f14de1984be3
+    capabilities:
+        - messaging
+    configurations:
+        vonage-number: "447312263020"
+    environment:
+        - name: "OPTIMOVE_ENV"
+          value: "sandbox"
+
+    entrypoint: ["node", "dist/server.js"]
+debug:
+    name: lottoland-sandbox-debug
+    entrypoint: ["node", "--inspect", "dist/server.js"]

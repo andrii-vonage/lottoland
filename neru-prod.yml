@@ -1,5 +1,5 @@
 project:
-    name: lottoland
+    name: lottoland-production
 instance:
     name: dev
     runtime: nodejs16
@@ -9,8 +9,11 @@ instance:
         - messaging
     configurations:
         vonage-number: "447312263020"
+    environment:
+        - name: "OPTIMOVE_ENV"
+          value: "production"
+
     entrypoint: ["node", "dist/server.js"]
 debug:
-    name: lottoland-debug
-    entrypoint: ["node", "dist/server.js"]
-#    entrypoint: ["ts-node", "--project", "tsconfig.server.json", "server.ts"]
+    name: lottoland-production-debug
+    entrypoint: ["node", "--inspect", "dist/server.js"]
