@@ -1,6 +1,4 @@
-import { neru, State } from "neru-alpha";
-
-const session = neru.getGlobalSession();
+import { neru } from "neru-alpha";
 
 export enum STATE_TABLE {
     CAMPAIGNS = "campaigns",
@@ -9,5 +7,4 @@ export enum STATE_TABLE {
     QUEUES = "queues",
 }
 
-// Create a separate state object for PRODUCTION and DEVELOPMENT
-export const state = new State(session, `state:${process.env.NODE_ENV}`);
+export const state = neru.getInstanceState();
