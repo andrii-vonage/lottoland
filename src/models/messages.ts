@@ -4,8 +4,7 @@ import { CampaignCustomer, updateCampaignMetrics } from "./campaign";
 import { state, STATE_TABLE } from "./state";
 import { APP_CALLBACK_ENDPOINT, OPTIMOVE_DELIVERY_STATUS } from "../config";
 
-const configurations = JSON.parse(process.env.NERU_CONFIGURATIONS);
-const VONAGE_NUMBER = configurations["vonage-number"];
+const VONAGE_NUMBER = process.env.VONAGE_NUMBER;
 
 const session = neru.getGlobalSession();
 export const messages = new Messages(session);

@@ -1,19 +1,43 @@
 project:
-    name: lottoland-production
+  name: lottoland-production
 instance:
-    name: dev
-    runtime: nodejs16
-    region: aws.euw1
-    application-id: 05f6b44e-0029-43d1-853b-89e398229a15
-    capabilities:
-        - messaging
-    configurations:
-        vonage-number: "447312263020"
-    environment:
-        - name: "OPTIMOVE_ENV"
-          value: "production"
-
-    entrypoint: ["node", "dist/server.js"]
+  name: dev
+  runtime: nodejs16
+  region: aws.euw1
+  application-id: 80c293c2-fe37-4818-bbb5-c5f0148911b6
+  capabilities:
+    - messaging
+  environment:
+    - name: VONAGE_NUMBER
+      value: "447451281552"
+    - name: OPTIMOVE_ENV
+      value: "production"
+    - name: AUTH0_SECRET
+      secret: AUTH0_SECRET
+    - name: AUTH0_BASE_URL
+      value: "https://neru-59e69cd7-lottoland-production-dev.euw1.serverless.vonage.com"
+    - name: AUTH0_ISSUER_BASE_URL
+      secret: AUTH0_ISSUER_BASE_URL
+    - name: AUTH0_CLIENT_ID
+      secret: AUTH0_CLIENT_ID
+    - name: AUTH0_CLIENT_SECRET
+      secret: AUTH0_CLIENT_SECRET
+    - name: API_USERNAME
+      secret: OPTIMOVE_USERNAME_PROD
+    - name: API_PASSWORD
+      secret: OPTIMOVE_PASSWORD_PROD
+    - name: API_BASE_URL
+      value: "https://api5.optimove.net"
+  entrypoint: ["node", "dist/server.js"]
 debug:
-    name: lottoland-production-debug
-    entrypoint: ["node", "--inspect", "dist/server.js"]
+  name: lottoland-production-debug
+  entrypoint:
+    - nodemon
+    - --watch
+    - src/**/*
+    - --watch
+    - server.ts
+    - -e
+    - ts,json
+    - --exec
+    - node --loader=ts-node/esm --inspect server.ts
