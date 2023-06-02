@@ -41,7 +41,6 @@ export const getCampaignsHandler = withApiAuthRequired(async (req: NextApiReques
     }
 });
 
-// TODO: Remove this handler
 export const deleteCampaignsHandler = async (req: NextApiRequest, res: NextApiResponse) => {
     try {
         await deleteCampaigns();
