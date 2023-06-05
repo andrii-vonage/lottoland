@@ -3,9 +3,9 @@
     "version": "0.1.0",
     "private": true,
     "scripts": {
-        "debug:sandbox": "source .env && neru debug -f neru-sandbox.yml",
+        "debug:sandbox": "source .env.debug && neru debug -f neru-sandbox.yml",
         "deploy:sandbox": "npm run build && neru deploy -f neru-sandbox.yml",
-        "debug:prod": "source .env && neru debug -f neru-prod.yml",
+        "debug:prod": "source .env.debug && neru debug -f neru-prod.yml",
         "deploy:prod": "npm run build && neru deploy -f neru-prod.yml",
         "build": "next build && tsc --project tsconfig.server.json",
         "lint": "next lint"
@@ -23,31 +23,31 @@
         "@emotion/react": "^11.10.6",
         "@emotion/styled": "^11.10.6",
         "@sms77.io/counter": "^1.5.0",
-        "@types/node": "18.15.11",
-        "@types/node-fetch": "^2.6.4",
-        "@types/react": "18.0.31",
-        "@types/react-dom": "18.0.11",
-        "@types/react-table": "^7.7.14",
         "date-fns": "^2.29.3",
         "dotenv": "^16.0.3",
-        "eslint": "8.37.0",
-        "eslint-config-next": "13.2.4",
         "express": "^4.18.2",
         "framer-motion": "^10.9.2",
         "joi": "^17.9.2",
         "neru-alpha": "^4.1.0-rc5",
         "next": "13.2.4",
         "node-fetch": "^2.6.11",
-        "prettier": "^2.8.8",
         "react": "18.2.0",
         "react-dom": "18.2.0",
         "react-hook-form": "^7.43.8",
         "react-table": "^7.8.0",
-        "swr": "^2.1.3",
-        "ts-node": "^10.9.1",
-        "typescript": "^4.9.5"
+        "swr": "^2.1.3"
     },
     "devDependencies": {
-        "@types/express": "^4.17.17"
+        "@types/express": "^4.17.17",
+        "@types/node": "18.15.11",
+        "@types/node-fetch": "^2.6.4",
+        "@types/react": "18.0.31",
+        "@types/react-dom": "18.0.11",
+        "@types/react-table": "^7.7.14",
+        "eslint": "8.37.0",
+        "eslint-config-next": "13.2.4",
+        "prettier": "^2.8.8",
+        "ts-node": "^10.9.1",
+        "typescript": "4.9.5"
     }
 }

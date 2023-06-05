@@ -15,6 +15,7 @@ import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { Template } from "src/pages/templates";
 import { CounterStats, getCounterStats } from "@sms77.io/counter";
+import { getOptOutLink } from "../links";
 import { getCountry } from "../utils";
 
 interface TemplateFormProps {
@@ -22,19 +23,6 @@ interface TemplateFormProps {
     onCancel: () => void;
     onSave: (data: Template) => void;
     template?: Template;
-}
-
-// TODO: regenerate links for sandbox and production
-const linksMap = {
-    NEXT_PUBLIC_BITLY_GB: "3IrMjWO",
-    NEXT_PUBLIC_BITLY_DE: "3Iph5iQ",
-    NEXT_PUBLIC_BITLY_PL: "3oiSIN5",
-    NEXT_PUBLIC_BITLY_SE: "3WlzsLC",
-    NEXT_PUBLIC_BITLY_BR: "3MC0b33",
-    NEXT_PUBLIC_BITLY_SK: "41StWRJ",
-    NEXT_PUBLIC_BITLY_HU: "45hrjeU",
-    NEXT_PUBLIC_BITLY_MX: "3pSABy3",
-    NEXT_PUBLIC_BITLY_AU: "43eXoT3",
 }
 
 export const TemplateForm = ({ busy = false, onCancel, onSave, template }: TemplateFormProps) => {
@@ -142,17 +130,17 @@ export const TemplateForm = ({ busy = false, onCancel, onSave, template }: Templ
                                 <FormLabel>Opt-out template</FormLabel>
                                 <Select placeholder="Select language" onChange={addOptOutUrl}>
                                     {[
-                                        ["GB", "English", linksMap.NEXT_PUBLIC_BITLY_GB],
-                                        ["DE", "German", linksMap.NEXT_PUBLIC_BITLY_DE],
-                                        ["PL", "Polish", linksMap.NEXT_PUBLIC_BITLY_PL],
-                                        ["SE", "Swedish", linksMap.NEXT_PUBLIC_BITLY_SE],
-                                        ["BR", "Portuguese (Brazil)", linksMap.NEXT_PUBLIC_BITLY_BR],
-                                        ["SK", "Slovakian", linksMap.NEXT_PUBLIC_BITLY_SK],
-                                        ["HU", "Hungarian", linksMap.NEXT_PUBLIC_BITLY_HU],
-                                        ["MX", "Spanish (Mexico)", linksMap.NEXT_PUBLIC_BITLY_MX],
-                                        ["AU", "English (KenoGO)", linksMap.NEXT_PUBLIC_BITLY_AU],
+                                        ["GB", "English", getOptOutLink("GB")],
+                                        ["DE", "German", getOptOutLink("DE")],
+                                        ["PL", "Polish", getOptOutLink("PL")],
+                                        ["SE", "Swedish", getOptOutLink("SE")],
+                                        ["BR", "Portuguese (Brazil)", getOptOutLink("BR")],
+                                        ["SK", "Slovakian", getOptOutLink("SK")],
+                                        ["HU", "Hungarian", getOptOutLink("HU")],
+                                        ["MX", "Spanish (Mexico)", getOptOutLink("MX")],
+                                        ["AU", "English (KenoGO)", getOptOutLink("AU")],
                                     ].map(([code, name, link]) => (
-                                        <option key={link} value={`https://bit.ly/${link}`}>
+                                        <option key={link} value={link}>
                                             {getCountry(code).emoji} {name}
                                         </option>
                                     ))}

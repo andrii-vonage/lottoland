@@ -1,4 +1,4 @@
-import { neru } from "neru-alpha";
+import { neru, State } from "neru-alpha";
 
 export enum STATE_TABLE {
     CAMPAIGNS = "campaigns",
@@ -7,4 +7,6 @@ export enum STATE_TABLE {
     QUEUES = "queues",
 }
 
-export const state = neru.getInstanceState();
+const globalSession = neru.getGlobalSession();
+
+export const state = new State(globalSession, `state:${process.env.OPTIMOVE_ENV}`);
