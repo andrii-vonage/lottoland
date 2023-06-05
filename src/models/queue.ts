@@ -48,40 +48,40 @@ const fetchQueueDetailsOrGetFromCache = async (queueName: string) => {
 };
 
 export const onQueueMessage = async (queueName, message: Message) => {
-    const mainQueueDetailsResponse = await fetchQueueDetailsOrGetFromCache(MAIN_QUEUE_NAME);
-
-    const {
-        stats: { totalEnqueue: mainQueueSize },
-        queueDetails: {
-            rate: { msgPerSecond: mainQueueRPS },
-        },
-    } = mainQueueDetailsResponse;
-
-    const mainQueueIsOverflown = mainQueueSize >= 60 * mainQueueRPS;
-    const mainQueueIsDrying = mainQueueSize < 30 * mainQueueRPS;
-
-    if (mainQueueIsOverflown) {
-        await queue
-            .updateQueue(queueName, {
-                maxInflight: 1,
-                msgPerSecond: 1,
-            })
-            .execute();
-    } else if (mainQueueIsDrying) {
-        await queue.updateQueue(queueName, {
-            maxInflight: 1,
-            msgPerSecond: mainQueueRPS,
-        });
-    }
+    // const mainQueueDetailsResponse = await fetchQueueDetailsOrGetFromCache(MAIN_QUEUE_NAME);
+    //
+    // const {
+    //     stats: { totalEnqueue: mainQueueSize },
+    //     queueDetails: {
+    //         rate: { msgPerSecond: mainQueueRPS },
+    //     },
+    // } = mainQueueDetailsResponse;
+    //
+    // const mainQueueIsOverflown = mainQueueSize >= 60 * mainQueueRPS;
+    // const mainQueueIsDrying = mainQueueSize < 30 * mainQueueRPS;
+    //
+    // if (mainQueueIsOverflown) {
+    //     await queue
+    //         .updateQueue(queueName, {
+    //             maxInflight: 1,
+    //             msgPerSecond: 1,
+    //         })
+    //         .execute();
+    // } else if (mainQueueIsDrying) {
+    //     await queue.updateQueue(queueName, {
+    //         maxInflight: 1,
+    //         msgPerSecond: mainQueueRPS,
+    //     });
+    // }
 
     await queue.enqueueSingle(MAIN_QUEUE_NAME, message).execute();
 
     // Update the emount of enqued messages in cache
-    mainQueueDetailsResponse.stats.totalEnqueue += 1;
+    // mainQueueDetailsResponse.stats.totalEnqueue += 1;
 };
 
 export const createQueueIfNotExists = async (queueName: string, callback: string, options: ICreateQueueOptions) => {
-        const isQueueCreated = await state.hget(STATE_TABLE.QUEUES, queueName);
+    const isQueueCreated = await state.hget(STATE_TABLE.QUEUES, queueName);
 
     if (!isQueueCreated) {
         try {
