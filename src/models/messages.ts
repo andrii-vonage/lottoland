@@ -91,6 +91,7 @@ export const onMessage = async (message: Message): Promise<void> => {
     sms.to = message.number;
     sms.from = VONAGE_NUMBER;
 
+
     const { message_uuid }: { message_uuid: string } = await messages.send(sms).execute();
 
     await state.hset(message_uuid, {

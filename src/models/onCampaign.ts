@@ -18,7 +18,7 @@ export const onCampaign = async (body: OnCampaignBody): Promise<void> => {
     const campaign: OnCampaignBody = body;
 
     const campaignId = campaign.CampaignID;
-    const queueName = campaignId.toString();
+    const queueName = `${campaignId.toString()}_${process.env.OPTIMOVE_ENV}`;
     let customers: CampaignCustomer[];
     let templates: Template[];
     let customersWithData: CampaignCustomer[];

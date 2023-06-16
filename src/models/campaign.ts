@@ -227,7 +227,8 @@ export const updateCampaignMetrics = async (
 };
 
 export const pauseCampaign = async (id: string) => {
-    await queue.pauseQueue(id).execute();
+    const queueName = `${id}_${process.env.OPTIMOVE_ENV}`;
+    await queue.pauseQueue(queueName).execute();
     await updateCampaignStatus(id, CAMPAIGN_STATUS.PAUSED);
 };
 
